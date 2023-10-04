@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "834583424179",
+    "project_id": "mess-manager-23",
+    "storage_bucket": "mess-manager-23.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834583424179:android:4586f57b36fbef202f94c6",
+        "android_client_info": {
+          "package_name": "com.sria.mess_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "834583424179-jl981a35c6pdjlgtgrob2uoevmm1hvq2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sria.mess_manager",
+            "certificate_hash": "637b4ef4ec90ed5e80c7135a2bbffa6ace009b40"
+          }
+        },
+        {
+          "client_id": "834583424179-is5p3frsoffoevtfdvbll0ql8ef8ud70.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPfStK-Lw58G0QaThU9NduZt-uCJk1zMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "834583424179-is5p3frsoffoevtfdvbll0ql8ef8ud70.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "834583424179-9b2buj7qdslbf3440p7ehj1odov9cpem.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.messManager"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
