@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mess Manager</string>
+    <string name="facebook_app_id">150304901437688</string>
+    <string name="fb_login_protocol_scheme">fb150304901437688</string>
+    <string name="facebook_client_token">d928584f950d9df3bd6608a2857089f1</string>
+</resources>
