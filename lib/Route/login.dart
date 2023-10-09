@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+import 'package:mess_manager/Methods/Firebase/initial_profile_update.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -15,8 +15,19 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   late bool showPassword = false;
-  late String typeEmail='';
-  late String typePassword='';
+  late String typeEmail = '';
+  late String typePassword = '';
+  late String typeName = '';
+  late bool signup = false;
+  late bool createLoading = false;
+
+  validateName (){
+    final RegExp nameRegX = RegExp(r'^[a-zA-z]+(\s[a-zA-Z]+)+$');
+    if(nameRegX.hasMatch(typeName)){
+      return true;
+    }
+    return false;
+  }
 
   _signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -28,18 +39,52 @@ class _LoginState extends State<Login> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
       await FirebaseAuth.instance.signInWithCredential(credential);
+    }
+  }
 
-      User? user = FirebaseAuth.instance.currentUser;
 
-      // if (user != null) {
-      //   Navigator.of(context).push(
-      //     MaterialPageRoute(
-      //       builder: (context) => const Home(),
-      //     ),
-      //   );
-      // }
+  _signupWithEmailAndPassword () async {
+    setState(() {
+      createLoading = true;
+    });
+    final signupResult = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: typeEmail, password: typePassword);
+    InitialProfileUpdate().updateDisplayName(typeName, signupResult.user!.uid);
+    if(signupResult.user!.emailVerified == false ){
+      signupResult.user!.sendEmailVerification();
+    }
+
+  }
+
+  _signInWithEmailAndPassword() async {
+    setState(() {
+      createLoading = true;
+    });
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: typeEmail, password: typePassword);
+    // if(FirebaseAuth.instance.currentUser!.emailVerified == false){
+    // }
+  }
+
+  _signInWithFacebook() async {
+    // Trigger the sign-in flow
+    final LoginResult loginResult = await FacebookAuth.instance
+        .login(permissions: ['email', 'public_profile']);
+    if (loginResult.accessToken != null) {
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.token);
+      final isSigning = await FirebaseAuth.instance
+          .signInWithCredential(facebookAuthCredential);
+      if (isSigning.additionalUserInfo!.isNewUser) {
+        final fbImageUrl = isSigning.additionalUserInfo!.profile!['picture']['data']['url'];
+        final userID = isSigning.user!.uid;
+        InitialProfileUpdate().updatePhoto(fbImageUrl, userID);
+      }
+      // debugPrint('---> Is Signing => ${isSigning.additionalUserInfo!.profile!['picture']['data']['url']}');
+      debugPrint(
+          '---> Is Signing => ${isSigning.additionalUserInfo!.isNewUser}');
+      // debugPrint('---> User => {$user}');
     }
   }
 
@@ -53,40 +98,8 @@ class _LoginState extends State<Login> {
     ),
   );
 
-  _signInWithEmailAndPassword() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(email: typeEmail, password: typePassword);
-    User? currentUser = FirebaseAuth.instance.currentUser;
-    if(currentUser != null && currentUser.emailVerified == false ) {
-      await currentUser.sendEmailVerification();
-    }
-
-  }
-  _signInWithFacebook() async {
-    // Trigger the sign-in flow
-    final LoginResult loginResult = await FacebookAuth.instance.login(
-      permissions: ['email', 'public_profile']
-    );
-    if (loginResult.accessToken != null) {
-      final OAuthCredential facebookAuthCredential = FacebookAuthProvider
-          .credential(loginResult.accessToken!.token);
-      var isSigning = await FirebaseAuth.instance.signInWithCredential(
-          facebookAuthCredential);
-      // debugPrint('---> Is Signing => ${isSigning.additionalUserInfo!.profile!['picture']['data']['url']}');
-      debugPrint('---> Is Signing => ${isSigning.additionalUserInfo!.isNewUser}');
-      User? user = FirebaseAuth.instance.currentUser;
-      if(isSigning.additionalUserInfo!.isNewUser){
-        final createUser = FirebaseFunctions.instance.httpsCallable('createProfile');
-        createUser({'fbPhotoUrl': isSigning.additionalUserInfo!.profile!['picture']['data']['url'],
-          'signingProvider': 'FACEBOOK'});
-
-      }
-      // debugPrint('---> User => {$user}');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    debugPrint('isEmail => ${GetUtils.isEmail(typeEmail)}');
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -128,36 +141,87 @@ class _LoginState extends State<Login> {
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Column(
                   children: [
+                    if (signup == true)
+                      Column(
+                        children: [
+                          TextFormField(
+                            onChanged: (name) {
+                              setState(() {
+                                typeName = name;
+                              });
+                            },
+                            initialValue: typeName,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                                floatingLabelAlignment:
+                                    FloatingLabelAlignment.center,
+                                labelText: 'Enter Name',
+                                labelStyle:
+                                    const TextStyle(color: Colors.white),
+                                filled: true,
+                                fillColor: typeName.isNotEmpty && !validateName()
+                                   ? Colors.red : Colors.teal[400],
+                                focusColor: Colors.teal[400],
+                                contentPadding:
+                                    const EdgeInsets.only(top: 15, bottom: 15),
+                                focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30.0)),
+                                    borderSide:
+                                        BorderSide(color: Colors.white)),
+                                border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30.0)),
+                                    borderSide: BorderSide.none),
+                                prefixIcon: const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                )),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
                     TextFormField(
                       onChanged: (email) {
                         setState(() {
-                          typeEmail = email;
+                          typeEmail = email.removeAllWhitespace;
                         });
                       },
                       initialValue: typeEmail,
                       keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                          floatingLabelAlignment: FloatingLabelAlignment.center,
-                          labelText: 'Enter Email',
-                          labelStyle: const TextStyle(color: Colors.white),
-                          filled: true,
-                          fillColor: Colors.teal[400],
-                          focusColor: Colors.teal[400],
-                          contentPadding:
-                              const EdgeInsets.only(top: 15, bottom: 15),
-                          focusedBorder: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30.0)),
-                              borderSide: BorderSide(color: Colors.white)),
-                          border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30.0)),
-                              borderSide: BorderSide.none),
-                          prefixIcon: const Icon(
-                            Icons.email,
-                            color: Colors.white,
-                          )),
+                        floatingLabelAlignment: FloatingLabelAlignment.center,
+                        labelText: 'Enter Email',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: typeEmail.isNotEmpty &&
+                                !GetUtils.isEmail(typeEmail)
+                            ? Colors.red
+                            : Colors.teal[400],
+                        focusColor: Colors.teal[400],
+                        contentPadding:
+                            const EdgeInsets.only(top: 15, bottom: 15),
+                        focusedBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(30.0)),
+                            borderSide: BorderSide(color: Colors.white)),
+                        border: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(30.0)),
+                            borderSide: BorderSide.none),
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.white,
+                        ),
+                        suffixIcon: GetUtils.isEmail(typeEmail) ?
+                        const Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+                        ) : null
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -175,7 +239,9 @@ class _LoginState extends State<Login> {
                           labelStyle: const TextStyle(color: Colors.white),
                           floatingLabelAlignment: FloatingLabelAlignment.center,
                           filled: true,
-                          fillColor: Colors.teal[400],
+                          fillColor: typePassword.isNotEmpty && typePassword.length < 6 ?
+                              Colors.red
+                          : Colors.teal[400],
                           contentPadding:
                               const EdgeInsets.only(top: 15, bottom: 15),
                           focusedBorder: const OutlineInputBorder(
@@ -205,52 +271,114 @@ class _LoginState extends State<Login> {
                     const SizedBox(
                       height: 20,
                     ),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Text('Forget password?', style: TextStyle(color: Colors.white, fontSize: 15),),
-                        ElevatedButton(
-                          style: raisedButtonStyle,
-                          onPressed: typeEmail.isNotEmpty &&
-                              typePassword.isNotEmpty && typePassword.length >= 6 && GetUtils.isEmail(typeEmail) ?
-                              () => _signInWithEmailAndPassword() : null,
-                          child: const Text('Login'),
-                        )
+                        if (signup == false)
+                          const Text(
+                            'Forget password?',
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                        if (signup == true)
+                          ElevatedButton(
+                            style: raisedButtonStyle,
+                            onPressed: () => setState(() {
+                              signup = false;
+                            }),
+                            child: const Text('Have an Account? Log in'),
+                          ),
+                        if (signup == true)
+                          ElevatedButton(
+                            style: raisedButtonStyle,
+                            onPressed: typeEmail.isNotEmpty && typeName.isNotEmpty && !createLoading
+                                && validateName() &&
+                                    typePassword.isNotEmpty &&
+                                    typePassword.length >= 6 &&
+                                    GetUtils.isEmail(typeEmail)
+                                ? () => _signupWithEmailAndPassword()
+                                : null,
+                            child: createLoading == true ?
+                            const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator( color: Colors.white, strokeWidth: 3.0,))
+                                : const Text('Sign up'),
+                          ),
+                        if (signup == false)
+                          ElevatedButton(
+                            style: raisedButtonStyle,
+                            onPressed: typeEmail.isNotEmpty && !createLoading &&
+                                    typePassword.isNotEmpty &&
+                                    typePassword.length >= 6 &&
+                                    GetUtils.isEmail(typeEmail)
+                                ? () => _signInWithEmailAndPassword()
+                                : null,
+                            child: createLoading == true ?
+                            const SizedBox(
+                              height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator( color: Colors.white, strokeWidth: 3.0,))
+                                : const Text('Login'),
+                          )
                       ],
                     ),
-                    const SizedBox(height: 20,),
-                    ElevatedButton(
-                      style: raisedButtonStyle,
-                      onPressed: () {},
-                      child: const Text('New? Sign up with Email'),
-                    ),
+                    if (signup == false)
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          ElevatedButton(
+                            style: raisedButtonStyle,
+                            onPressed: () => setState(() {
+                              signup = true;
+                            }),
+                            child: const Text('New? Sign up with Email'),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
-
             ],
           ),
         ),
       ),
-      floatingActionButton: MediaQuery.of(context).viewInsets.bottom != 0 ? null : Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              _signInWithGoogle();
-            },
-            child: const FaIcon(FontAwesomeIcons.google),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _signInWithFacebook();
-            },
-            child: FaIcon(FontAwesomeIcons.facebook, color: Colors.blue.shade700,),
-          ),
-        ],
-      ) ,
+      floatingActionButton: MediaQuery.of(context).viewInsets.bottom != 0
+          ? null
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Text(
+                  'Sing in without password',
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        _signInWithGoogle();
+                      },
+                      child: const FaIcon(FontAwesomeIcons.google),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _signInWithFacebook();
+                      },
+                      child: FaIcon(
+                        FontAwesomeIcons.facebook,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }

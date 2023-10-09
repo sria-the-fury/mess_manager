@@ -14,8 +14,9 @@ class Authenticated extends StatelessWidget {
       builder: (context, snapshot) {
         debugPrint('snapshot state => ${snapshot.connectionState}');
         if (snapshot.hasData) {
-          debugPrint('authenticated SnapShot => ${snapshot.data!.emailVerified}');
+          debugPrint('authenticated SnapShot => ${snapshot.data}');
           if(snapshot.data!.emailVerified == false && snapshot.data!.providerData[0].providerId == 'password'){
+            // snapshot.data!.sendEmailVerification();
             return const VerifyEmail();
           }
 

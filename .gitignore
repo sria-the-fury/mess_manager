@@ -9,7 +9,6 @@ firebase-debug.*.log*
 .dart_tool
 build
 .idea
-android/.gradle
 
 # Firebase cache
 .firebase/
@@ -68,3 +67,6 @@ node_modules/
 
 # dotenv environment variables file
 .env
+/android/.gradle/
+
+.flutter-plugins-dependencies

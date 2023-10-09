@@ -27,7 +27,7 @@ class _HomeState extends State<BottomNavHome> {
       const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
       const BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Expenses'),
        BottomNavigationBarItem(icon: CircularProfile(imageURL: authUser!.photoURL.toString(),
-         roundBorder: currentPageIndex == 2 ? true : false, imageHeight: 30, imageWidth: 30,) , label: 'Profile'),
+         roundBorder: currentPageIndex == 2 ? true : false, imageHeight: 30) , label: 'Profile'),
     ];
 
     final bottomNavBar = BottomNavigationBar(

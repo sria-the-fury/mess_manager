@@ -21,6 +21,18 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       themeMode: ThemeMode.light,
       darkTheme: ThemeData(
+          inputDecorationTheme: const InputDecorationTheme(
+              contentPadding:
+              EdgeInsets.only(top: 15, bottom: 15),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(25.0)),
+                  borderSide: BorderSide(color: Colors.white)),
+              border: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(25.0)),
+                  borderSide: BorderSide.none)
+          ),
         appBarTheme: const AppBarTheme(
           iconTheme: IconThemeData(color: Colors.white),
             backgroundColor: Colors.black,
@@ -35,6 +47,18 @@ class MyApp extends StatelessWidget {
         useMaterial3: true
       ),
       theme: ThemeData(
+        inputDecorationTheme: const InputDecorationTheme(
+            contentPadding:
+            EdgeInsets.only(top: 15, bottom: 15),
+            focusedBorder: OutlineInputBorder(
+                borderRadius:
+                BorderRadius.all(Radius.circular(25.0)),
+                borderSide: BorderSide(color: Colors.white)),
+            border: OutlineInputBorder(
+                borderRadius:
+                BorderRadius.all(Radius.circular(25.0)),
+                borderSide: BorderSide.none)
+        ),
         appBarTheme: AppBarTheme(
             iconTheme: const IconThemeData(color: Colors.white),
             backgroundColor: Colors.teal[600],

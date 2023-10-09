@@ -2,38 +2,31 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-exports.createProfile = functions.auth.user().onCreate((user, data) => {
-  console.log("user info in func =>", user);
-  const userPhoto = data.signingProvider === "FACEBOOK" ?
-  data.fbPhotoUrl : user.photoUrl;
-  const userData = {
-    "displayName": user.displayName,
-    "email": user.email,
-    "photoURL": userPhoto,
-    "provider": data.signingProvider,
-    "userID": user.uid,
-  };
-
-  return admin.firestore().doc("users/"+user.uid).set(userData);
-  // or admin.firestore().doc('users').add(userObject); for auto generated ID
+exports.addUserToDB = functions.auth.user().onCreate( async (user) => {
+  const {uid, displayName, email, photoURL} = user;
+  return await admin.firestore().collection("users")
+      .doc(uid).set({userID: uid, displayName, email, photoURL});
 });
 
-exports.addAdminRole = functions.https.onCall((data, context)=>{
+exports.addAdminRole = functions.https.onCall( async (data, context) => {
   // only admin made admin
   // if (context.auth.token.admin !== true) {
   //     return {error: 'Admin can add another admin'};
   // }
+  console.log("Data from user =>", data.email);
+  const user = await admin.auth().getUserByEmail(data.email);
+  console.log("user =>", user);
+  return admin.auth().setCustomUserClaims(user.uid, {dev: true});
+});
 
-  return admin.auth().getUserByEmail(data.email).then((user) => {
-    return admin.auth.getAuth().setCustomUserClaims(user.uid, {
-      admin: true,
-    });
-  }).then(() => {
+exports.fbEmailVerify = functions.auth.user().beforeCreate((user, context) => {
+  console.log("user => ", user);
+  if (user.email && !user.emailVerified &&
+     context.eventType.indexOf(":facebook.com") !== -1) {
+    console.log("context =>", context);
     return {
-      "message": `Success! ${data.email} has been made an admin`,
+      emailVerified: true,
     };
-  }).catch((err) => {
-    return err;
-  });
+  }
 });
 
