@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mess_manager/Extras/circular_profile.dart';
-import 'package:mess_manager/Route/expenses.dart';
-import 'package:mess_manager/Route/home.dart';
-import 'package:mess_manager/Route/profile.dart';
+import 'package:mess_manager/Widgets/Extras/circular_profile.dart';
+import 'package:mess_manager/Widgets/Route/expenses.dart';
+import 'package:mess_manager/Widgets/Route/home.dart';
+import 'package:mess_manager/Widgets/Route/profile.dart';
 
 class BottomNavHome extends StatefulWidget {
   const BottomNavHome({super.key});

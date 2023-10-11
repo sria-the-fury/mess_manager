@@ -3,9 +3,10 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 exports.addUserToDB = functions.auth.user().onCreate( async (user) => {
-  const {uid, displayName, email, photoURL} = user;
+  const {uid, displayName, email, photoURL, providerData} = user;
   return await admin.firestore().collection("users")
-      .doc(uid).set({userID: uid, displayName, email, photoURL});
+      .doc(uid).set({userID: uid, displayName, email, photoURL,
+        provider: providerData[0].providerId});
 });
 
 exports.addAdminRole = functions.https.onCall( async (data, context) => {
@@ -20,10 +21,8 @@ exports.addAdminRole = functions.https.onCall( async (data, context) => {
 });
 
 exports.fbEmailVerify = functions.auth.user().beforeCreate((user, context) => {
-  console.log("user => ", user);
   if (user.email && !user.emailVerified &&
      context.eventType.indexOf(":facebook.com") !== -1) {
-    console.log("context =>", context);
     return {
       emailVerified: true,
     };
