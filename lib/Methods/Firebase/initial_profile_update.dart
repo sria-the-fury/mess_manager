@@ -4,11 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class InitialProfileUpdate{
   updatePhoto(url, uid) async {
-    await FirebaseAuth.instance.currentUser!.updatePhotoURL(url);
-    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+    await FirebaseAuth.instance.currentUser!.updatePhotoURL(url).then( (value) => FirebaseFirestore.instance.collection('users').doc(uid).set({
       "photoURL": url
 
-    }, SetOptions(merge: true));
+    }, SetOptions(merge: true)));
   }
   updateDisplayName (name, uid) async {
     await FirebaseAuth.instance.currentUser!.updateDisplayName(name);

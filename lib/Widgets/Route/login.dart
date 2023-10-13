@@ -21,9 +21,9 @@ class _LoginState extends State<Login> {
   late bool signup = false;
   late bool createLoading = false;
 
-  validateName (){
+  validateName() {
     final RegExp nameRegX = RegExp(r'^[a-zA-z]+(\s[a-zA-Z]+)+$');
-    if(nameRegX.hasMatch(typeName)){
+    if (nameRegX.hasMatch(typeName)) {
       return true;
     }
     return false;
@@ -43,18 +43,17 @@ class _LoginState extends State<Login> {
     }
   }
 
-
-  _signupWithEmailAndPassword () async {
+  _signupWithEmailAndPassword() async {
     setState(() {
       createLoading = true;
     });
     final signupResult = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: typeEmail, password: typePassword);
+        .createUserWithEmailAndPassword(
+            email: typeEmail, password: typePassword);
     InitialProfileUpdate().updateDisplayName(typeName, signupResult.user!.uid);
-    if(signupResult.user!.emailVerified == false ){
+    if (signupResult.user!.emailVerified == false) {
       signupResult.user!.sendEmailVerification();
     }
-
   }
 
   _signInWithEmailAndPassword() async {
@@ -77,8 +76,10 @@ class _LoginState extends State<Login> {
       final isSigning = await FirebaseAuth.instance
           .signInWithCredential(facebookAuthCredential);
       if (isSigning.additionalUserInfo!.isNewUser) {
-        final fbImageUrl = isSigning.additionalUserInfo!.profile!['picture']['data']['url'];
+        final fbImageUrl =
+            isSigning.additionalUserInfo!.profile!['picture']['data']['url'];
         final userID = isSigning.user!.uid;
+        debugPrint('suerOF => $userID');
         InitialProfileUpdate().updatePhoto(fbImageUrl, userID);
       }
       // debugPrint('---> Is Signing => ${isSigning.additionalUserInfo!.profile!['picture']['data']['url']}');
@@ -100,7 +101,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       extendBody: true,
@@ -155,12 +155,15 @@ class _LoginState extends State<Login> {
                             decoration: InputDecoration(
                                 floatingLabelAlignment:
                                     FloatingLabelAlignment.center,
+                                floatingLabelStyle: const TextStyle(color: Colors.white),
                                 labelText: 'Enter Name',
                                 labelStyle:
                                     const TextStyle(color: Colors.white),
                                 filled: true,
-                                fillColor: typeName.isNotEmpty && !validateName()
-                                   ? Colors.red : Colors.teal[400],
+                                fillColor:
+                                    typeName.isNotEmpty && !validateName()
+                                        ? Colors.red
+                                        : Colors.teal[400],
                                 focusColor: Colors.teal[400],
                                 contentPadding:
                                     const EdgeInsets.only(top: 15, bottom: 15),
@@ -193,35 +196,37 @@ class _LoginState extends State<Login> {
                       keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        floatingLabelAlignment: FloatingLabelAlignment.center,
-                        labelText: 'Enter Email',
-                        labelStyle: const TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: typeEmail.isNotEmpty &&
-                                !GetUtils.isEmail(typeEmail)
-                            ? Colors.red
-                            : Colors.teal[400],
-                        focusColor: Colors.teal[400],
-                        contentPadding:
-                            const EdgeInsets.only(top: 15, bottom: 15),
-                        focusedBorder: const OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(30.0)),
-                            borderSide: BorderSide(color: Colors.white)),
-                        border: const OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(30.0)),
-                            borderSide: BorderSide.none),
-                        prefixIcon: const Icon(
-                          Icons.email,
-                          color: Colors.white,
-                        ),
-                        suffixIcon: GetUtils.isEmail(typeEmail) ?
-                        const Icon(
-                          Icons.check_circle,
-                          color: Colors.white,
-                        ) : null
-                      ),
+                          floatingLabelAlignment: FloatingLabelAlignment.center,
+                          floatingLabelStyle:
+                              const TextStyle(color: Colors.white),
+                          labelText: 'Enter Email',
+                          labelStyle: const TextStyle(color: Colors.white),
+                          filled: true,
+                          fillColor: typeEmail.isNotEmpty &&
+                                  !GetUtils.isEmail(typeEmail)
+                              ? Colors.red
+                              : Colors.teal[400],
+                          focusColor: Colors.teal[400],
+                          contentPadding:
+                              const EdgeInsets.only(top: 15, bottom: 15),
+                          focusedBorder: const OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30.0)),
+                              borderSide: BorderSide(color: Colors.white)),
+                          border: const OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30.0)),
+                              borderSide: BorderSide.none),
+                          prefixIcon: const Icon(
+                            Icons.email,
+                            color: Colors.white,
+                          ),
+                          suffixIcon: GetUtils.isEmail(typeEmail)
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                )
+                              : null),
                     ),
                     const SizedBox(
                       height: 20,
@@ -238,10 +243,13 @@ class _LoginState extends State<Login> {
                           labelText: 'Enter Password',
                           labelStyle: const TextStyle(color: Colors.white),
                           floatingLabelAlignment: FloatingLabelAlignment.center,
+                          floatingLabelStyle:
+                              const TextStyle(color: Colors.white),
                           filled: true,
-                          fillColor: typePassword.isNotEmpty && typePassword.length < 6 ?
-                              Colors.red
-                          : Colors.teal[400],
+                          fillColor:
+                              typePassword.isNotEmpty && typePassword.length < 6
+                                  ? Colors.red
+                                  : Colors.teal[400],
                           contentPadding:
                               const EdgeInsets.only(top: 15, bottom: 15),
                           focusedBorder: const OutlineInputBorder(
@@ -290,34 +298,43 @@ class _LoginState extends State<Login> {
                         if (signup == true)
                           ElevatedButton(
                             style: raisedButtonStyle,
-                            onPressed: typeEmail.isNotEmpty && typeName.isNotEmpty && !createLoading
-                                && validateName() &&
+                            onPressed: typeEmail.isNotEmpty &&
+                                    typeName.isNotEmpty &&
+                                    !createLoading &&
+                                    validateName() &&
                                     typePassword.isNotEmpty &&
                                     typePassword.length >= 6 &&
                                     GetUtils.isEmail(typeEmail)
                                 ? () => _signupWithEmailAndPassword()
                                 : null,
-                            child: createLoading == true ?
-                            const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator( color: Colors.white, strokeWidth: 3.0,))
+                            child: createLoading == true
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 3.0,
+                                    ))
                                 : const Text('Sign up'),
                           ),
                         if (signup == false)
                           ElevatedButton(
                             style: raisedButtonStyle,
-                            onPressed: typeEmail.isNotEmpty && !createLoading &&
+                            onPressed: typeEmail.isNotEmpty &&
+                                    !createLoading &&
                                     typePassword.isNotEmpty &&
                                     typePassword.length >= 6 &&
                                     GetUtils.isEmail(typeEmail)
                                 ? () => _signInWithEmailAndPassword()
                                 : null,
-                            child: createLoading == true ?
-                            const SizedBox(
-                              height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator( color: Colors.white, strokeWidth: 3.0,))
+                            child: createLoading == true
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 3.0,
+                                    ))
                                 : const Text('Login'),
                           )
                       ],
@@ -361,15 +378,22 @@ class _LoginState extends State<Login> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
                       onPressed: () {
                         _signInWithGoogle();
                       },
-                      child: const FaIcon(FontAwesomeIcons.google),
+                      child: const FaIcon(
+                        FontAwesomeIcons.google,
+                        color: Colors.deepPurple,
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         _signInWithFacebook();
                       },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
                       child: FaIcon(
                         FontAwesomeIcons.facebook,
                         color: Colors.blue.shade700,
