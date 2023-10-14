@@ -8,13 +8,13 @@ class UserSignInProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(2),
         decoration: const BoxDecoration(
           color: Colors.white,
-          shape: BoxShape.circle,),
-        child: providerId == 'google.com' ? const FaIcon(  FontAwesomeIcons.google, size: 16,) :
+          shape: BoxShape.circle),
+        child: providerId == 'google.com' ? const FaIcon(  FontAwesomeIcons.google, size: 16, color: Colors.purple,) :
         providerId == 'facebook.com' ?  FaIcon(  FontAwesomeIcons.facebook, size: 16, color: Colors.blue.shade700) :
-            const Icon(Icons.email)
+        Icon(Icons.email, size: 16, color: Colors.blue.shade700)
     );
   }
 }

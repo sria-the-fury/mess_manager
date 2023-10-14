@@ -30,7 +30,7 @@ class CircularProfile extends StatelessWidget {
             value: imageData.progress,
           ),
       errorWidget: (context, url, error) =>
-       Icon(Icons.person, size: imageHeight,),
+       Icon(Icons.account_circle, size: imageHeight,),
     );
   }
 }
