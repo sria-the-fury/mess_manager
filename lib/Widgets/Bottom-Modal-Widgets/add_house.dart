@@ -119,7 +119,7 @@ class _AddHouseState extends State<AddHouse> {
                 isActive: _index == 2 ? true : false,
                 content: Column(
                   children: [
-                    const Text('You are the first member of this house. After creating you can add your mates.'),
+                    const Text('You will be the first member of this house. After creating you can add your mates.'),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
