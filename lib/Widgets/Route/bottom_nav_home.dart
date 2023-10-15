@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:mess_manager/Widgets/Extras/circular_profile.dart';
 import 'package:mess_manager/Widgets/Route/expenses.dart';
 import 'package:mess_manager/Widgets/Route/home.dart';
@@ -14,9 +15,23 @@ class BottomNavHome extends StatefulWidget {
 
 class _HomeState extends State<BottomNavHome> {
   int currentPageIndex = 0;
+
+
+
+  @override
+  void initState() {
+    if(GetStorage().read('userPhotoURL') == null){
+      GetStorage().write('userPhotoURL', FirebaseAuth.instance.currentUser!.photoURL);
+    }
+    if(GetStorage().read('switchNotification') == null){
+      GetStorage().write('switchNotification', true);
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    User? authUser = FirebaseAuth.instance.currentUser;
+
     final showingPage = [
       const Home(),
       const Expenses(),
@@ -26,8 +41,8 @@ class _HomeState extends State<BottomNavHome> {
     final bottomNavItems = [
       const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
       const BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Expenses'),
-       BottomNavigationBarItem(icon: CircularProfile(imageURL: authUser!.photoURL.toString(),
-         roundBorder: currentPageIndex == 2 ? true : false, imageHeight: 30) , label: 'Profile'),
+       BottomNavigationBarItem(icon: CircularProfile(roundBorder: currentPageIndex == 2
+           ? true : false, imageHeight: 30) , label: 'Profile'),
     ];
 
     final bottomNavBar = BottomNavigationBar(

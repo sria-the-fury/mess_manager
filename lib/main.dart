@@ -32,8 +32,6 @@ class MyApp extends StatelessWidget {
       return themeMode;
     }
 
-
-
     return GetMaterialApp(
       title: 'Mess Manager',
       themeMode: themeMode() == 'SYSTEM' ? ThemeMode.system : themeMode() == 'DARK' ? ThemeMode.dark : ThemeMode.light,

@@ -1,16 +1,10 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:mess_manager/Widgets/Extras/circular_profile.dart';
 import 'package:mess_manager/Widgets/Extras/user_sign_provider.dart';
 import 'package:mess_manager/Widgets/Extras/users_basic_data.dart';
-import 'package:image_picker/image_picker.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -20,94 +14,16 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  late bool notificationSwitch = false;
+  late bool notificationSwitch = GetStorage().read('switchNotification');
   late String appTheme = GetStorage().read('themeMode');
-  XFile? _pickedFile;
-  late File displayImage;
-  late double uploadProgress = 0;
-
-  Future<void> _getPickedImage(context, authUser) async {
-    final darkTheme = Theme.of(context).brightness.name == 'dark' ? true : false;
-    final pickedFile = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 50);
-    if (pickedFile != null) {
-      setState(() {
-        _pickedFile = pickedFile;
-      });
-    }
-
-    if (_pickedFile != null) {
-      final croppedFile = await ImageCropper().cropImage(
-        sourcePath: _pickedFile!.path,
-        compressFormat: ImageCompressFormat.jpg,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-        ],
-        compressQuality: 50,
-        cropStyle: CropStyle.circle,
-        uiSettings: [
-          AndroidUiSettings(
-              toolbarTitle: 'SET DISPlAY IMAGE',
-              toolbarColor: darkTheme ? Colors.black : Colors.teal[600],
-              statusBarColor: darkTheme ? Colors.black : Colors.teal[600],
-              toolbarWidgetColor: Colors.white,
-              initAspectRatio: CropAspectRatioPreset.original,
-              lockAspectRatio: true),
-          IOSUiSettings(
-            title: 'SET DISPlAY IMAGE',
-          ),
-        ],
-      );
-      if (croppedFile != null) {
-        debugPrint('cropped image => ${croppedFile.path}');
-        try{
-          await updateProfilePhoto(File(croppedFile.path));
-          Get.snackbar('DISPLAY PHOTO', 'Your photo has been updated.',
-              backgroundColor: Colors.teal.shade600.withOpacity(0.6),
-              maxWidth: 300);
-        } catch(error){
-          Get.snackbar('ERROR @ SET PHOTO', '$error', snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: const Color.fromRGBO(255, 69, 0, 0.4), maxWidth: 300);
-        }
-      }
-    }
-  }
-
-  updateProfilePhoto(image) async {
-    final currentUser = FirebaseAuth.instance.currentUser!;
-    final storageRef = FirebaseStorage.instance.ref('displayPhoto/${currentUser.uid}.jpg');
-    TaskSnapshot uploadTask = await storageRef.putFile(image);
-      setState(() {
-        uploadProgress = (uploadTask.bytesTransferred / uploadTask.totalBytes);
-      });
-
-    final downloadUrl = await storageRef.getDownloadURL();
-
-    if (downloadUrl.isNotEmpty) {
-      currentUser.updatePhotoURL(downloadUrl);
-      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).set({
-        'photoURL': downloadUrl,
-      }, SetOptions(merge: true));
-      setState(() {
-        uploadProgress = 0;
-      });
-    }
-  }
-
-  Widget uploadProgressWidget (value) =>
-      LinearProgressIndicator(value: value,color: Colors.teal[500],);
-
-
 
   @override
   Widget build(BuildContext context) {
     final darkTheme = Theme.of(context).brightness.name == 'dark' ? true : false;
     User? authUser = FirebaseAuth.instance.currentUser!;
-    debugPrint('uploadProgress => $uploadProgress');
 
 
     return Scaffold(
-      bottomNavigationBar: uploadProgress != 0 ? uploadProgressWidget(uploadProgress) : null,
       appBar: AppBar(
         actions: [
           IconButton(
@@ -132,27 +48,11 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Stack(
                             children: [
-                              CircularProfile(
-                                  imageURL: authUser.photoURL.toString(),
-                                  imageHeight: 120),
-                              Positioned(
-                                right: 10,
-                                  top: 5,
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.all(2),
-                                    height: 28,
-                                    width: 28,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white
-                                    ),
-                                    child: IconButton(
-                                        padding: const EdgeInsets.all(0.0),
-                                      onPressed: () => _getPickedImage(context,authUser),
-                                      icon: Icon(Icons.add_a_photo, size: 20, color: Colors.teal[600],)
-                                    ),
-                                  ) ),
+                              const CircularProfile(
+                                  imageHeight: 120,
+                                updatePhoto: true,
+                              ),
+
                               Positioned(
                                   bottom: 0,
                                   right: 50,
@@ -199,7 +99,7 @@ class _ProfileState extends State<Profile> {
                                   SizedBox(
                                     width: 5,
                                   ),
-                                  Text('You home town',
+                                  Text('Your home town',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15)),
                                 ],
@@ -343,6 +243,7 @@ class _ProfileState extends State<Profile> {
                       Switch(
                         value: notificationSwitch,
                         onChanged: (value) {
+                          GetStorage().write('switchNotification', value);
                           setState(() {
                             notificationSwitch = value;
                           });
