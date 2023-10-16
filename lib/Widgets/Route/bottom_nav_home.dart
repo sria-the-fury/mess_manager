@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mess_manager/Widgets/Extras/circular_profile.dart';
@@ -20,9 +19,6 @@ class _HomeState extends State<BottomNavHome> {
 
   @override
   void initState() {
-    if(GetStorage().read('userPhotoURL') == null){
-      GetStorage().write('userPhotoURL', FirebaseAuth.instance.currentUser!.photoURL);
-    }
     if(GetStorage().read('switchNotification') == null){
       GetStorage().write('switchNotification', true);
     }

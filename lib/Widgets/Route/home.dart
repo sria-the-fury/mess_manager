@@ -54,7 +54,7 @@ class Home extends StatelessWidget {
           );
 
         },
-        child: const Icon(Icons.house),
+        child: const Icon(Icons.house, color: Colors.white,),
 
       ),
     );

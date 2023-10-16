@@ -9,12 +9,15 @@ class UserSignInProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.all(2),
+        alignment: Alignment.center,
+        height: 30,
+        width: 30,
         decoration: const BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle),
-        child: providerId == 'google.com' ? const FaIcon(  FontAwesomeIcons.google, size: 16, color: Colors.purple,) :
-        providerId == 'facebook.com' ?  FaIcon(  FontAwesomeIcons.facebook, size: 16, color: Colors.blue.shade700) :
-        Icon(Icons.email, size: 16, color: Colors.blue.shade700)
+        child: providerId == 'google.com' ? const FaIcon(FontAwesomeIcons.google, size: 20, color: Colors.purple,) :
+        providerId == 'facebook.com' ?  FaIcon(  FontAwesomeIcons.facebook, size: 20, color: Colors.blue.shade700) :
+        Icon(Icons.email, size: 20, color: Colors.blue.shade800)
     );
   }
 }

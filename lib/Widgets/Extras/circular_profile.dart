@@ -5,10 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mess_manager/Widgets/Extras/get_snackbar.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CircularProfile extends StatefulWidget {
   final double imageHeight;
@@ -62,23 +62,12 @@ class _CircularProfileState extends State<CircularProfile> {
         ],
       );
       if (croppedFile != null) {
-        debugPrint('cropped image => ${croppedFile.path}');
         try {
           await updateProfilePhoto(File(croppedFile.path));
-          Get.snackbar('DISPLAY PHOTO', 'Your photo has been updated.',
-              backgroundColor: Colors.teal.shade600.withOpacity(0.6),
-              maxWidth: 300);
+          GetSnackbar().success('SET PHOTO', 'Your photo has been updated.');
         } catch (error) {
-          Get.snackbar('ERROR @ SET PHOTO', '$error',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: const Color.fromRGBO(255, 69, 0, 0.4),
-              maxWidth: 300);
-        }
-        finally{
-          User? authUser = FirebaseAuth.instance.currentUser!;
-          await authUser.reload();
-          final currentUser = FirebaseAuth.instance.currentUser!;
-          GetStorage().write('userPhotoURL', currentUser.photoURL);
+          GetSnackbar().error('SET PHOTO', error);
+
         }
       }
     }
@@ -116,36 +105,60 @@ class _CircularProfileState extends State<CircularProfile> {
   @override
   Widget build(BuildContext context) {
 
+    final darkTheme = Theme.of(context).brightness.name == 'dark' ? true : false;
     User? authUser = FirebaseAuth.instance.currentUser!;
+    final Stream<DocumentSnapshot> userStream = FirebaseFirestore.instance
+        .collection('users').doc(authUser.uid).snapshots();
     return Stack(
       children: [
-        CachedNetworkImage(
-          width: widget.imageHeight,
-          height: widget.imageHeight,
-          imageUrl: GetStorage().read('userPhotoURL'),
-          imageBuilder: (context, imageProvider) => Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: widget.roundBorder == true
-                  ? Border.all(color: Colors.white, width: 2)
-                  : null,
-              image: DecorationImage(
-                image: imageProvider,
-                fit: BoxFit.cover,
-                // colorFilter: const ColorFilter.mode(
-                //     Colors.red, BlendMode.colorBurn)
-              ),
-            ),
-          ),
-          progressIndicatorBuilder: (context, url, imageData) =>
-              CircularProgressIndicator(
-            value: imageData.progress,
-          ),
-          errorWidget: (context, url, error) => Icon(
-            Icons.account_circle,
-            size: widget.imageHeight,
-          ),
-        ),
+        StreamBuilder<DocumentSnapshot>(stream: userStream,
+            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
+              if (snapshot.hasData) {
+                final userData = snapshot.data!;
+                return CachedNetworkImage(
+                  width: widget.imageHeight,
+                  height: widget.imageHeight,
+                  imageUrl: userData['photoURL'],
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: widget.roundBorder == true
+                          ? Border.all(color: Colors.white, width: 2)
+                          : null,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                        // colorFilter: const ColorFilter.mode(
+                        //     Colors.red, BlendMode.colorBurn)
+                      ),
+                    ),
+                  ),
+                  progressIndicatorBuilder: (context, url, imageData) =>
+                      CircularProgressIndicator(
+                        value: imageData.progress,
+                      ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.account_circle,
+                    size: widget.imageHeight,
+                  ),
+                );
+              }
+
+              return Center(
+                child: Shimmer.fromColors
+                  (baseColor: Colors.grey.shade400,
+                    highlightColor: Colors.grey.shade100, child: Container(
+                  height: widget.imageHeight,
+                  width: widget.imageHeight,
+                  decoration: BoxDecoration(
+                      color:  Colors.white.withOpacity(0.4),
+                      shape: BoxShape.circle
+                  ),
+                )),
+              );
+
+
+            }),
         if (widget.updatePhoto == true)
           Positioned(
               right: 10,
@@ -155,15 +168,15 @@ class _CircularProfileState extends State<CircularProfile> {
                 padding: const EdgeInsets.all(2),
                 height: 28,
                 width: 28,
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: darkTheme ? Colors.black54 : Colors.white54),
                 child: IconButton(
                     padding: const EdgeInsets.all(0.0),
                     onPressed: () => _getPickedImage(context, authUser),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.add_a_photo,
                       size: 20,
-                      color: Colors.teal[600],
                     )),
               )),
       ],

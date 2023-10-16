@@ -18,7 +18,7 @@ class UserBasicData extends StatelessWidget {
             fontWeight: FontWeight.bold,),
           UsersBasicDataWidget(userData: authUser.email.toString(), iconName: Icons.email),
           const UsersBasicDataWidget(userData: 'Date of Birth', iconName: Icons.cake),
-          const UsersBasicDataWidget(userData: 'Phone Number', iconName: Icons.phone_enabled),
+          const UsersBasicDataWidget(userData: 'Phone Number', iconName: Icons.call),
         ],
       ),
     );

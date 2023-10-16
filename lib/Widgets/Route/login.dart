@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:mess_manager/Methods/Firebase/initial_profile_update.dart';
+import 'package:mess_manager/Widgets/Extras/get_snackbar.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -47,23 +48,68 @@ class _LoginState extends State<Login> {
     setState(() {
       createLoading = true;
     });
-    final signupResult = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-            email: typeEmail, password: typePassword);
-    InitialProfileUpdate().updateDisplayName(typeName, signupResult.user!.uid);
-    if (signupResult.user!.emailVerified == false) {
-      signupResult.user!.sendEmailVerification();
+    try{
+      final signupResult = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+          email: typeEmail, password: typePassword);
+      InitialProfileUpdate().updateDisplayName(typeName, signupResult.user!.uid);
+      if (signupResult.user!.emailVerified == false) {
+        signupResult.user!.sendEmailVerification();
+      }
+
+    } on FirebaseAuthException catch (e){
+      debugPrint('e.code => ${e.code}');
+      setState(() {
+        createLoading = false;
+      });
+      if(e.code == 'account-exists-with-different-credential'){
+        GetSnackbar().error('SIGN UP', 'You have an account using by ${e.credential}');
+      }
+      else if (e.code == 'weak-password') {
+        GetSnackbar().error('SIGN UP', 'The password provided is too weak.');
+      }
+      else if (e.code == 'email-already-in-use') {
+        GetSnackbar().error('SIGN UP', 'The account already exists for that email');
+      }
+
+      else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+        GetSnackbar().error('SIGN UP', 'Invalid credentials. Try using Google or Facebook.');
+      }
     }
+
   }
 
   _signInWithEmailAndPassword() async {
     setState(() {
       createLoading = true;
     });
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: typeEmail, password: typePassword);
-    // if(FirebaseAuth.instance.currentUser!.emailVerified == false){
-    // }
+    try{
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: typeEmail, password: typePassword);
+
+    } on FirebaseAuthException catch (e){
+      debugPrint('e.code => ${e.code}');
+      setState(() {
+        createLoading = false;
+      });
+      if(e.code == 'account-exists-with-different-credential'){
+        GetSnackbar().error('LOG IN', 'You have an account using by ${e.credential}');
+      }
+      else if (e.code == 'weak-password') {
+        GetSnackbar().error('LOG IN', 'The password provided is too weak.');
+      }
+
+      else if (e.code == 'user-not-found') {
+        GetSnackbar().error('LOG IN', 'No user found for that email.');
+      }
+      else if (e.code == 'wrong-password') {
+        GetSnackbar().error('LOG IN', 'Wrong password provided for that user.');
+      }
+      else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+        GetSnackbar().error('LOG IN', 'Invalid credentials. Try using Google or Facebook.');
+      }
+    }
+
   }
 
   _signInWithFacebook() async {

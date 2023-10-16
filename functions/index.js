@@ -5,7 +5,9 @@ admin.initializeApp();
 exports.addUserToDB = functions.auth.user().onCreate( async (user) => {
   const {uid, displayName, email, photoURL, providerData} = user;
   return await admin.firestore().collection("users")
-      .doc(uid).set({userID: uid, displayName, email, photoURL,
+      .doc(uid).set({userID: uid, 
+        displayName: providerData[0].providerId == "password" ? "" : displayName,
+        email, photoURL: photoURL == null ? "" : photoURL,
         provider: providerData[0].providerId});
 });
 
