@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:mess_manager/Methods/Firebase/initial_profile_update.dart';
-import 'package:mess_manager/Widgets/Extras/get_snackbar.dart';
+import 'package:mess_manager/Widgets/Extras/custom_get_snackbar.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -63,17 +63,17 @@ class _LoginState extends State<Login> {
         createLoading = false;
       });
       if(e.code == 'account-exists-with-different-credential'){
-        GetSnackbar().error('SIGN UP', 'You have an account using by ${e.credential}');
+        CustomGetSnackbar().error('SIGN UP', 'You have an account using by ${e.credential}');
       }
       else if (e.code == 'weak-password') {
-        GetSnackbar().error('SIGN UP', 'The password provided is too weak.');
+        CustomGetSnackbar().error('SIGN UP', 'The password provided is too weak.');
       }
       else if (e.code == 'email-already-in-use') {
-        GetSnackbar().error('SIGN UP', 'The account already exists for that email');
+        CustomGetSnackbar().error('SIGN UP', 'The account already exists for that email.');
       }
 
       else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        GetSnackbar().error('SIGN UP', 'Invalid credentials. Try using Google or Facebook.');
+        CustomGetSnackbar().error('SIGN UP', 'Invalid credentials. Try using Google or Facebook.');
       }
     }
 
@@ -93,20 +93,20 @@ class _LoginState extends State<Login> {
         createLoading = false;
       });
       if(e.code == 'account-exists-with-different-credential'){
-        GetSnackbar().error('LOG IN', 'You have an account using by ${e.credential}');
+        CustomGetSnackbar().error('LOG IN', 'You have an account using by ${e.credential}.');
       }
       else if (e.code == 'weak-password') {
-        GetSnackbar().error('LOG IN', 'The password provided is too weak.');
+        CustomGetSnackbar().error('LOG IN', 'The password provided is too weak.');
       }
 
       else if (e.code == 'user-not-found') {
-        GetSnackbar().error('LOG IN', 'No user found for that email.');
+        CustomGetSnackbar().error('LOG IN', 'No user found for that email.');
       }
       else if (e.code == 'wrong-password') {
-        GetSnackbar().error('LOG IN', 'Wrong password provided for that user.');
+        CustomGetSnackbar().error('LOG IN', 'Wrong password provided for that user.');
       }
       else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        GetSnackbar().error('LOG IN', 'Invalid credentials. Try using Google or Facebook.');
+        CustomGetSnackbar().error('LOG IN', 'Invalid credentials. Try using Google or Facebook.');
       }
     }
 

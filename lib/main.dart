@@ -2,8 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:mess_manager/Methods/Bindings/home_bindings.dart';
 import 'package:mess_manager/Theme-Data/theme_data.dart';
 import 'package:mess_manager/Widgets/Route/authenticated.dart';
+import 'package:mess_manager/Widgets/Route/bottom_nav_home.dart';
+import 'package:mess_manager/Widgets/Route/login.dart';
 import 'package:mess_manager/firebase_options.dart';
 
 void main() async {
@@ -37,6 +40,10 @@ class MyApp extends StatelessWidget {
       themeMode: themeMode() == 'SYSTEM' ? ThemeMode.system : themeMode() == 'DARK' ? ThemeMode.dark : ThemeMode.light,
       darkTheme: darkThemeData,
       theme: lightThemeData,
+      getPages: [
+        GetPage(name: '/login', page:  () => const Login()),
+        GetPage(name: '/', page:  () => const BottomNavHome(), binding: HomeBindings()),
+      ],
       home: const Authenticated(),
     );
   }

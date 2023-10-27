@@ -5,9 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mess_manager/Widgets/Extras/get_snackbar.dart';
+import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
+import 'package:mess_manager/Widgets/Extras/custom_get_snackbar.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CircularProfile extends StatefulWidget {
@@ -27,6 +29,7 @@ class CircularProfile extends StatefulWidget {
 class _CircularProfileState extends State<CircularProfile> {
   XFile? _pickedFile;
   late File displayImage;
+  final FirestoreController userController = Get.put(FirestoreController());
 
   Future<void> _getPickedImage(context, authUser) async {
     final darkTheme =
@@ -64,9 +67,9 @@ class _CircularProfileState extends State<CircularProfile> {
       if (croppedFile != null) {
         try {
           await updateProfilePhoto(File(croppedFile.path));
-          GetSnackbar().success('SET PHOTO', 'Your photo has been updated.');
+          CustomGetSnackbar().success('PHOTO', 'Your photo has been updated.');
         } catch (error) {
-          GetSnackbar().error('SET PHOTO', error);
+          CustomGetSnackbar().error('PHOTO', error);
 
         }
       }
@@ -98,7 +101,6 @@ class _CircularProfileState extends State<CircularProfile> {
 
   @override
   void initState() {
-    FirebaseAuth.instance.currentUser!.reload();
     super.initState();
   }
 
@@ -107,14 +109,11 @@ class _CircularProfileState extends State<CircularProfile> {
 
     final darkTheme = Theme.of(context).brightness.name == 'dark' ? true : false;
     User? authUser = FirebaseAuth.instance.currentUser!;
-    final Stream<DocumentSnapshot> userStream = FirebaseFirestore.instance
-        .collection('users').doc(authUser.uid).snapshots();
     return Stack(
       children: [
-        StreamBuilder<DocumentSnapshot>(stream: userStream,
-            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
-              if (snapshot.hasData) {
-                final userData = snapshot.data!;
+        Obx((){
+              if (userController.userData.isNotEmpty) {
+                final userData = userController.userData;
                 return CachedNetworkImage(
                   width: widget.imageHeight,
                   height: widget.imageHeight,

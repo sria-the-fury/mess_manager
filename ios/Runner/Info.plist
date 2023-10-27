@@ -18,7 +18,11 @@
     <string>d928584f950d9df3bd6608a2857089f1</string>
     <key>FacebookDisplayName</key>
     <string>Mess Manager</string>
-
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>sms</string>
+      <string>tel</string>
+    </array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

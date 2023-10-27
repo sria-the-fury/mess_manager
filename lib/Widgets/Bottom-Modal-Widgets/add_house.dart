@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mess_manager/Methods/Firebase/add_house_to_db.dart';
 
 class AddHouse extends StatefulWidget {
@@ -48,8 +49,9 @@ class _AddHouseState extends State<AddHouse> {
                       houseName.isNotEmpty && houseAddress.isNotEmpty
                           && controlDetails.stepIndex == 2 ? () {
                         AddHouseToDB().addHouse(houseName, houseAddress);
+                        Get.back(closeOverlays: true);
                       } : null,
-                      child: Text(controlDetails.stepIndex == 2 ? 'Submit' : 'Continue')),
+                      child: Text(controlDetails.stepIndex == 2 ? 'Add' : 'Continue')),
                   const SizedBox(width: 5,),
                   if(_index > 0)TextButton(
                       onPressed: controlDetails.onStepCancel,
@@ -119,7 +121,20 @@ class _AddHouseState extends State<AddHouse> {
                 isActive: _index == 2 ? true : false,
                 content: Column(
                   children: [
-                    const Text('You will be the first member of this house. After creating you can add your mates.'),
+                    RichText(
+                      textAlign: TextAlign.justify,
+                      text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: const [
+                          TextSpan(text: 'You will be the first'),
+                          TextSpan(text: ' member and manager ', style: TextStyle(fontWeight: FontWeight.bold),),
+                          TextSpan(text: 'of this house.'),
+                          TextSpan(text: ' After creating you can '),
+                          TextSpan(text: ' add your house mates.', style: TextStyle(fontWeight: FontWeight.bold),),
+
+                        ],
+                      ),
+                    ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
