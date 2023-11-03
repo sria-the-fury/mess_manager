@@ -32,7 +32,6 @@ class _LoginState extends State<Login> {
 
   _signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    debugPrint('<------ googleUser => $googleUser ----------------->');
     if (googleUser != null) {
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
@@ -58,7 +57,7 @@ class _LoginState extends State<Login> {
       }
 
     } on FirebaseAuthException catch (e){
-      debugPrint('e.code => ${e.code}');
+
       setState(() {
         createLoading = false;
       });
@@ -88,7 +87,7 @@ class _LoginState extends State<Login> {
           .signInWithEmailAndPassword(email: typeEmail, password: typePassword);
 
     } on FirebaseAuthException catch (e){
-      debugPrint('e.code => ${e.code}');
+
       setState(() {
         createLoading = false;
       });
@@ -125,13 +124,10 @@ class _LoginState extends State<Login> {
         final fbImageUrl =
             isSigning.additionalUserInfo!.profile!['picture']['data']['url'];
         final userID = isSigning.user!.uid;
-        debugPrint('suerOF => $userID');
+
         InitialProfileUpdate().updatePhoto(fbImageUrl, userID);
       }
-      // debugPrint('---> Is Signing => ${isSigning.additionalUserInfo!.profile!['picture']['data']['url']}');
-      debugPrint(
-          '---> Is Signing => ${isSigning.additionalUserInfo!.isNewUser}');
-      // debugPrint('---> User => {$user}');
+
     }
   }
 

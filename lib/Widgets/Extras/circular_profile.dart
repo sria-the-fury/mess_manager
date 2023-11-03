@@ -134,6 +134,7 @@ class _CircularProfileState extends State<CircularProfile> {
                   ),
                   progressIndicatorBuilder: (context, url, imageData) =>
                       CircularProgressIndicator(
+                        strokeWidth: 2,
                         value: imageData.progress,
                       ),
                   errorWidget: (context, url, error) => Icon(

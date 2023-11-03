@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
 import 'package:mess_manager/Widgets/Extras/circular_profile.dart';
 import 'package:mess_manager/Widgets/Extras/user_sign_provider.dart';
 import 'package:mess_manager/Widgets/Extras/users_basic_data.dart';
@@ -155,7 +156,10 @@ class _ProfileState extends State<Profile> {
                       thickness: 1,
                     ),
                     InkWell(
-                      onTap: () => FirebaseAuth.instance.signOut(),
+                      onTap: () {
+                        Get.delete<FirestoreController>();
+                        FirebaseAuth.instance.signOut();
+                        },
                       child: Row(
                         children: [
                           const Icon(

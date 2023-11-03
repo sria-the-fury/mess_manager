@@ -1,20 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestoreService {
-  final currentUser = FirebaseAuth.instance.currentUser!;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Stream<List<Map<String, dynamic>>> getHouseData() {
-    return _firestore.collection('houses').where('createdBy', isEqualTo: currentUser.uid).snapshots().map((querySnapshot) {
+  Stream<Stream<Map<String, dynamic>>> houseData(userId){
+    return _firestore.collection('users').doc(userId).snapshots().map((documentSnapshot){
+      final userData = documentSnapshot.data()!;
+        return getSingleHouse(userData['houseId']);
+    });
+
+  }
+  Stream<Map<String, dynamic>> getSingleHouse(userId){
+    return _firestore.collection('houses').doc(userId).snapshots().map((documentSnapshot){
+      return documentSnapshot.exists ? documentSnapshot.data()! : {};
+    });
+  }
+
+
+
+  Stream<List<Map<String, dynamic>>> getHouseData(userId) {
+    return _firestore.collection('houses').where('createdBy', isEqualTo: userId).snapshots().map((querySnapshot) {
       return querySnapshot.docs.map((doc) => doc.data()).toList();
     });
   }
-  Stream<Map<String, dynamic>> getUserData(){
-    return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
+  Stream<Map<String, dynamic>> getUserData(userId){
+    return _firestore.collection('users').doc(userId).snapshots().map((documentSnapshot){
       return documentSnapshot.data()!;
     });
-
   }
 }
 

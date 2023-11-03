@@ -32,3 +32,13 @@ exports.fbEmailVerify = functions.auth.user().beforeCreate((user, context) => {
   }
 });
 
+exports.updateUserHouseId = functions.firestore.document("houses/{houseId}")
+    .onCreate( async (snap, context) => {
+      const {houseId, createdBy} = snap.data();
+      console.log("Context =>", context);
+      console.log("snap => ", snap);
+      return await admin.firestore().collection("users").doc(createdBy).set({
+        houseId: houseId,
+      }, {merge: true});
+    });
+
