@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:mess_manager/Widgets/Custom-Bottom-Sheet/bottom_sheet.dart';
 import 'package:mess_manager/Widgets/Extras/User-Widgets/user_preview.dart';
+import 'package:mess_manager/Widgets/Extras/add_house_mates.dart';
 import 'package:shimmer/shimmer.dart';
 class HomeDetails extends StatelessWidget {
   final FirestoreController houseController = Get.put(FirestoreController());
@@ -298,31 +300,37 @@ class HomeDetails extends StatelessWidget {
                               style: const TextStyle(fontSize: 16), overflow: TextOverflow.clip,)),
                       ],
                     ),
-                     Row(
+                     Column(
+                       mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Stack(
+                        Row(
                           children: [
                             const Icon(Icons.group, size: 25,),
-                            Positioned(
-                              top:-1,
-                              right: -1,
-                                child: Badge(label:Text(houseController.houseData['members'].length.toString()),
-                                  backgroundColor: Colors.teal[600], textColor: Colors.white, textStyle: const TextStyle(fontSize: 10),)),
+                            const SizedBox(width: 5,),
+                            Text(houseController.houseData['members'].length > 1 && houseController.houseData['members'].length < 3?
+                            'You & ${houseController.houseData['members'].length - 1} person' :  houseController.houseData['members'].length > 2 ?
+                            'You & ${houseController.houseData['members'].length - 1} persons'  : 'Only you'),
                           ],
                         ),
-
                         const SizedBox(width: 5,),
-                        Expanded(child: Wrap(
+                        Wrap(
                           spacing: 5,
                           children: houseController.houseData['members'].map<Widget>((memberId) {
                             final membersList  = houseController.houseData['members'];
-                            final lastMember =  membersList[membersList.length - 1];
                             final currentMember = membersList.indexOf(memberId);
 
-                              return UserPreview(memberId: memberId, houseName: houseController.houseData['houseName'], currentMemberIndex: currentMember,);}).toList(),
-                        )),
+                              return UserPreview(houseName: houseController.houseData['houseName'], houseId: houseController.houseData['houseId'],
+                                houseCreator: houseController.houseData['createdBy'],
+                                currentMemberIndex: currentMember, houseManager: houseController.houseData['houseManager']);}).toList(),
+                        ),
                       ],
                     ),
+
+                    ElevatedButton(onPressed: (){
+                      CustomBottomSheet().showBottomSheet(context,
+                          AddHouseMates(houseId: houseController.houseData['houseId']));
+                    }, child: const Text('Add Mates'))
 
                   ],
                 ),

@@ -2,7 +2,9 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
-import 'package:mess_manager/Widgets/Bottom-Modal-Widgets/add_house.dart';
+
+import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/add_house.dart';
+import 'package:mess_manager/Widgets/Custom-Bottom-Sheet/bottom_sheet.dart';
 import 'package:mess_manager/Widgets/Extras/home_details.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -94,33 +96,7 @@ class Home extends StatelessWidget {
           }
           return FloatingActionButton(
             onPressed: () {
-              showModalBottomSheet(
-                isScrollControlled: true,
-                isDismissible: false,
-                context: context,
-                builder: (context) {
-                  return AnimatedPadding(
-                      padding: MediaQuery.of(context).viewInsets,
-                      duration: const Duration(milliseconds: 100),
-                      curve: Curves.decelerate,
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        children: [
-                          Container(
-                            alignment: Alignment.topCenter,
-                            height: 10,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.teal[500],
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                          const AddHouse()
-                        ],
-                      ));
-                },
-              );
+              CustomBottomSheet().showBottomSheet(context, const AddHouse());
             },
             child: const Icon(
               Icons.add_home_sharp,
