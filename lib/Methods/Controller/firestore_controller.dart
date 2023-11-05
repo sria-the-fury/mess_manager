@@ -4,33 +4,37 @@ import 'package:mess_manager/Methods/Controller/firestore_service.dart';
 
 class FirestoreController extends GetxController {
   final FirestoreService _firestoreService = FirestoreService();
+  final currentUser = FirebaseAuth.instance.currentUser!;
 
-  late Rx<User?> _user;
-  final RxList<Map<String, dynamic>> data = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> membersData = <Map<String, dynamic>>[].obs;
   final RxMap<String, dynamic> userData = <String, dynamic>{}.obs;
   final RxMap<String, dynamic> houseData = <String, dynamic>{}.obs;
 
   @override
   void onReady() {
     super.onReady();
-    final auth = FirebaseAuth.instance;
 
-    _user = Rx<User?>(auth.currentUser!);
-    _user.bindStream(auth.userChanges());
-    _firestoreService.houseData(_user.value!.uid).listen((streamData) {
+    _firestoreService.houseData().listen((streamData) {
       streamData.listen((event) {
         houseData.assignAll(event);
       });
     });
-    _firestoreService.getUserData(_user.value!.uid).listen((streamData) {
+    _firestoreService.getUserData().listen((streamData) {
       userData.assignAll(streamData);
+    });
+    _firestoreService.getHouseMembers().listen((userEvent) {
+      userEvent.listen((houseEvent) {
+        houseEvent.listen((memberEvent) {
+          membersData.assignAll(memberEvent);
+        });
+      });
     });
   }
 
   @override
   void onClose() {
     super.onClose();
-    final userStream = _firestoreService.getUserData(_user.value!.uid).listen((event) {
+    final userStream = _firestoreService.getUserData().listen((event) {
     });
     userStream.cancel();
 

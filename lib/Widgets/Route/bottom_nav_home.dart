@@ -40,7 +40,7 @@ class _HomeState extends State<BottomNavHome> {
   Widget build(BuildContext context) {
 
     final showingPage = [
-      const Home(),
+       Home(),
       const Expenses(),
       const Profile(),
     ];

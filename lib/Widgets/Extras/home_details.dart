@@ -291,7 +291,7 @@ class HomeDetails extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.location_on, size: 20,),
+                        const Icon(Icons.location_on, size: 25,),
                         const SizedBox(width: 5,),
                         Expanded(
                             child: Text('${houseController.houseData['houseLocation']}',
@@ -300,15 +300,30 @@ class HomeDetails extends StatelessWidget {
                     ),
                      Row(
                       children: [
-                        const Icon(Icons.group, size: 20,),
+                        Stack(
+                          children: [
+                            const Icon(Icons.group, size: 25,),
+                            Positioned(
+                              top:-1,
+                              right: -1,
+                                child: Badge(label:Text(houseController.houseData['members'].length.toString()),
+                                  backgroundColor: Colors.teal[600], textColor: Colors.white, textStyle: const TextStyle(fontSize: 10),)),
+                          ],
+                        ),
+
                         const SizedBox(width: 5,),
                         Expanded(child: Wrap(
                           spacing: 5,
-                          children: houseController.houseData['members'].map<Widget>((memberId) =>
-                              UserPreview(memberId: memberId, houseName: houseController.houseData['houseName'],)).toList(),
+                          children: houseController.houseData['members'].map<Widget>((memberId) {
+                            final membersList  = houseController.houseData['members'];
+                            final lastMember =  membersList[membersList.length - 1];
+                            final currentMember = membersList.indexOf(memberId);
+
+                              return UserPreview(memberId: memberId, houseName: houseController.houseData['houseName'], currentMemberIndex: currentMember,);}).toList(),
                         )),
                       ],
                     ),
+
                   ],
                 ),
               ],

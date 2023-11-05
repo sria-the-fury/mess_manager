@@ -9,21 +9,22 @@ import 'package:url_launcher/url_launcher.dart';
 
 class UserPreview extends StatelessWidget {
   final String memberId;
+  final int currentMemberIndex;
   final String houseName;
    UserPreview(
-      {super.key, required this.memberId, required this.houseName});
+      {super.key, required this.memberId, required this.houseName, required this.currentMemberIndex});
   final FirestoreController userController = Get.put(FirestoreController());
 
   getName(name) {
     List<String> nameList = name.split(" ");
-    return nameList.length == 1 ? nameList[0] : nameList[nameList.length - 1];
+    return nameList[0];
   }
 
   @override
   Widget build(BuildContext context) {
     User? currentUser = FirebaseAuth.instance.currentUser!;
     return  Obx((){
-        if (userController.userData.isEmpty) {
+        if (userController.membersData.isEmpty) {
           return Container(
             decoration: BoxDecoration(
                 color: Colors.teal[600],
@@ -73,7 +74,7 @@ class UserPreview extends StatelessWidget {
                   CachedNetworkImage(
                     width: 100,
                     height: 100,
-                    imageUrl: userController.userData['photoURL'],
+                    imageUrl: userController.membersData[currentMemberIndex]['photoURL'],
                     imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -97,7 +98,7 @@ class UserPreview extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${userController.userData['displayName']}',
+                    '${userController.membersData[currentMemberIndex]['displayName']}',
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
@@ -157,7 +158,7 @@ class UserPreview extends StatelessWidget {
                   child: CachedNetworkImage(
                     width: 30,
                     height: 30,
-                    imageUrl: userController.userData['photoURL'],
+                    imageUrl: userController.membersData[currentMemberIndex]['photoURL'],
                     imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -185,7 +186,7 @@ class UserPreview extends StatelessWidget {
                   width: 5,
                 ),
                 Text(
-                  '${getName(userController.userData['displayName'])}${memberId == currentUser.uid ? ' (You)' : ''}',
+                  '${getName(userController.membersData[currentMemberIndex]['displayName'])}${memberId == currentUser.uid ? ' (You)' : ''}',
                   style: const TextStyle(color: Colors.white),
                 )
               ],
