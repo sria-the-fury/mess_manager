@@ -4,7 +4,7 @@ import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:mess_manager/Widgets/Custom-Bottom-Sheet/bottom_sheet.dart';
 import 'package:mess_manager/Widgets/Extras/User-Widgets/user_preview.dart';
-import 'package:mess_manager/Widgets/Extras/add_house_mates.dart';
+import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/add_house_mates.dart';
 import 'package:shimmer/shimmer.dart';
 class HomeDetails extends StatelessWidget {
   final FirestoreController houseController = Get.put(FirestoreController());

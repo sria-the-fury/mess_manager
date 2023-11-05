@@ -58,7 +58,7 @@ class Home extends StatelessWidget {
                           pause: const Duration(milliseconds: 3000),
                         animatedTexts: [
                           TyperAnimatedText('Welcome to Mess Manager. Please, add a house.'
-                              ' After creating a house you can add your house mates.', speed: const Duration(milliseconds: 120)),
+                              ' After creating a house, you can add your house mates.', speed: const Duration(milliseconds: 120)),
                         ]),
 
                           RichText(

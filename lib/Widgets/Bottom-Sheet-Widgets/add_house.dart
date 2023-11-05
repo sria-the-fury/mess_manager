@@ -117,7 +117,7 @@ class _AddHouseState extends State<AddHouse> {
                 ),
               ),
               Step(
-                title: const Text('Submit'),
+                title: const Text('Finally'),
                 isActive: _index == 2 ? true : false,
                 content: Column(
                   children: [
@@ -127,9 +127,9 @@ class _AddHouseState extends State<AddHouse> {
                         style: DefaultTextStyle.of(context).style,
                         children: const [
                           TextSpan(text: 'You will be the first'),
-                          TextSpan(text: ' member and manager ', style: TextStyle(fontWeight: FontWeight.bold),),
-                          TextSpan(text: 'of this house.'),
-                          TextSpan(text: ' After creating you can '),
+                          TextSpan(text: ' member and manager', style: TextStyle(fontWeight: FontWeight.bold),),
+                          TextSpan(text: ' of this house.'),
+                          TextSpan(text: ' After creating you can,'),
                           TextSpan(text: ' add your house mates.', style: TextStyle(fontWeight: FontWeight.bold),),
 
                         ],

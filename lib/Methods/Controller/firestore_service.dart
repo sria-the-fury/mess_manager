@@ -24,8 +24,8 @@ class FirestoreService {
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       final userData = documentSnapshot.data()!;
       return _firestore.collection('houses').doc(userData['houseId']).snapshots().map((documentSnapshot){
-        final houseData =  documentSnapshot.data()!;
-        return _firestore.collection('users').where('houseId', isEqualTo: houseData['houseId']).snapshots().map((querySnapshot) {
+        final houseData =  documentSnapshot.data();
+        return _firestore.collection('users').where('houseId', isEqualTo: houseData?['houseId'] ?? '').snapshots().map((querySnapshot) {
           return querySnapshot.docs.map((doc) => doc.data()).toList();
         });
       });
