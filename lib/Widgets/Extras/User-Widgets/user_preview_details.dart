@@ -145,9 +145,6 @@ class UserPreviewDetails extends StatelessWidget {
                         AssignHouseManager(houseMateName: selectedMembersData['displayName'],
                             houseMateId: selectedMembersData['userID'],
                             houseId: houseId));
-                    // AddHouseToDB().changeHouseManager(
-                    //     houseId,
-                    //     selectedMembersData['userID']);
                   },
                   child: Container(
                       padding: const EdgeInsets.all(5),

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
@@ -22,15 +23,17 @@ class HomeDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? currentUser = FirebaseAuth.instance.currentUser!;
     final darkTheme =
         Theme.of(context).brightness.name == 'dark' ? true : false;
     return Obx(
       () {
         if (houseController.houseData.isEmpty) {
           return Center(
-            child: Container(
-                clipBehavior: Clip.hardEdge,
+            child:  Container(
                 padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
+                clipBehavior: Clip.hardEdge,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
@@ -69,7 +72,6 @@ class HomeDetails extends StatelessWidget {
                           children: [
                             const Icon(
                               Icons.location_on,
-                              size: 20,
                             ),
                             const SizedBox(
                               width: 5,
@@ -94,7 +96,6 @@ class HomeDetails extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.group,
-                                  size: 20,
                                 ),
                                 const SizedBox(
                                   width: 5,
@@ -305,8 +306,37 @@ class HomeDetails extends StatelessWidget {
                                 ),
                               ],
                             ),
+
                           ],
                         ),
+                        const SizedBox(height: 10,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Shimmer.fromColors(
+                                baseColor: Colors.grey.shade400,
+                                highlightColor: Colors.grey.shade100,
+                                child: Container(
+                                  height: 32,
+                                  width: 32,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white
+                                          .withOpacity(0.4),
+                                      shape: BoxShape.circle),
+                                )),
+                            Shimmer.fromColors(
+                                baseColor: Colors.grey.shade400,
+                                highlightColor: Colors.grey.shade100,
+                                child: Container(
+                                  height: 32,
+                                  width: 32,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white
+                                          .withOpacity(0.4),
+                                      shape: BoxShape.circle),
+                                )),
+                          ],
+                        )
                       ],
                     ),
                   ],
@@ -340,7 +370,6 @@ class HomeDetails extends StatelessWidget {
                         children: [
                           const Icon(
                             Icons.location_on,
-                            size: 25,
                           ),
                           const SizedBox(
                             width: 5,
@@ -360,9 +389,7 @@ class HomeDetails extends StatelessWidget {
                           Row(
                             children: [
                               const Icon(
-                                Icons.group,
-                                size: 25,
-                              ),
+                                Icons.group,),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -401,60 +428,60 @@ class HomeDetails extends StatelessWidget {
                                       .houseData['houseManager']);
                             }).toList(),
                           ),
-                          const SizedBox(height: 10,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                  height: 32,
-                                  width: 32,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      CustomBottomSheet()
-                                          .showBottomSheet(context,
-                                          AddHouse(isEdit: true,
+                        ],
+                      ),
+                      const SizedBox(height: 10,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if(houseController.houseData['houseManager'] == currentUser.uid)SizedBox(
+                              height: 32,
+                              width: 32,
+                              child: IconButton(
+                                onPressed: () {
+                                  CustomBottomSheet()
+                                      .showBottomSheet(context,
+                                      AddHouse(isEdit: true,
                                           houseName: houseController.houseData['houseName'],
                                           houseId: houseController.houseData['houseId'],
                                           houseAddress: houseController.houseData['houseLocation']));
-                                    },
-                                    style: IconButton.styleFrom(
-                                        backgroundColor: darkTheme
-                                            ? Colors.black87
-                                            : Colors.teal.shade600,
-                                        side: const BorderSide(
-                                            color: Colors.white, width: 2)),
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      size: 16,
-                                      color: Colors.white,
-                                    ),
-                                  )),
-                              SizedBox(
-                                  height: 32,
-                                  width: 32,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      CustomBottomSheet().showBottomSheet(
-                                          context,
-                                          AddHouseMates(
-                                              houseId:
-                                              houseController.houseData['houseId']));
-                                    },
-                                    style: IconButton.styleFrom(
-                                        backgroundColor: Colors.teal.shade600,
-                                        side: const BorderSide(
-                                            color: Colors.white, width: 2)),
-                                    icon: const Icon(
-                                      Icons.person_add,
-                                      size: 16,
-                                      color: Colors.white,
-                                    ),
-                                  ))
+                                },
+                                style: IconButton.styleFrom(
+                                    backgroundColor: darkTheme
+                                        ? Colors.black87
+                                        : Colors.teal.shade600,
+                                    side: const BorderSide(
+                                        color: Colors.white, width: 2)),
+                                icon: const Icon(
+                                  Icons.edit,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              )),
+                          SizedBox(
+                              height: 32,
+                              width: 32,
+                              child: IconButton(
+                                onPressed: () {
+                                  CustomBottomSheet().showBottomSheet(
+                                      context,
+                                      AddHouseMates(
+                                          houseId:
+                                          houseController.houseData['houseId']));
+                                },
+                                style: IconButton.styleFrom(
+                                    backgroundColor: Colors.teal.shade600,
+                                    side: const BorderSide(
+                                        color: Colors.white, width: 2)),
+                                icon: const Icon(
+                                  Icons.person_add,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ))
 
-                            ],
-                          )
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ],
