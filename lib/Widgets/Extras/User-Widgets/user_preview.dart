@@ -17,7 +17,8 @@ class UserPreview extends StatelessWidget {
       required this.houseName,
       required this.houseManager,
       required this.houseCreator,
-      required this.houseId, required this.memberId});
+      required this.houseId,
+      required this.memberId});
   final FirestoreController userController = Get.put(FirestoreController());
 
   getName(name) {
@@ -67,83 +68,87 @@ class UserPreview extends StatelessWidget {
               ],
             ),
           );
-        }
-        else {
-          final selectedUser = userController.membersData.firstWhere((user) => user['userID'] == memberId);
-          return selectedUser
-              .containsKey('houseId')
+        } else {
+          final selectedUser = userController.membersData
+              .firstWhere((user) => user['userID'] == memberId);
+          return selectedUser.containsKey('houseId')
               ? GestureDetector(
-            onTap: () =>
-                Get.defaultDialog(
-                  title: '',
-                  titlePadding: EdgeInsets.zero,
-                  contentPadding: const EdgeInsets.only(top: 0),
-                  titleStyle: const TextStyle(fontSize: 20),
-                  content: UserPreviewDetails(currentUserId: currentUser.uid,
-                      houseManager: houseManager,
-                      houseId: houseId,
-                      selectedMembersData: selectedUser,
-                      houseName: houseName),
-                ),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.teal[600],
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.all(5),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleAvatar(
-                    radius: 15,
-                    child: CachedNetworkImage(
-                      width: 30,
-                      height: 30,
-                      imageUrl: selectedUser['photoURL'],
-                      imageBuilder: (context, imageProvider) =>
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                                // colorFilter: const ColorFilter.mode(
-                                //     Colors.red, BlendMode.colorBurn)
+                  onTap: () => Get.defaultDialog(
+                    title: '',
+                    titlePadding: EdgeInsets.zero,
+                    contentPadding: const EdgeInsets.only(top: 0),
+                    titleStyle: const TextStyle(fontSize: 20),
+                    content: UserPreviewDetails(
+                        currentUserId: currentUser.uid,
+                        houseManager: houseManager,
+                        houseId: houseId,
+                        selectedMembersData: selectedUser,
+                        houseName: houseName),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.teal[600],
+                        shape: BoxShape.rectangle,
+                        border: currentUser.uid == selectedUser['userID'] ? Border.all(color: Colors.white) : null,
+                        borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          radius: 15,
+                          child: CachedNetworkImage(
+                            width: 30,
+                            height: 30,
+                            imageUrl: selectedUser['photoURL'],
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                  // colorFilter: const ColorFilter.mode(
+                                  //     Colors.red, BlendMode.colorBurn)
+                                ),
                               ),
                             ),
+                            progressIndicatorBuilder:
+                                (context, url, imageData) =>
+                                    CircularProgressIndicator(
+                              strokeWidth: 2,
+                              value: imageData.progress,
+                            ),
+                            errorWidget: (context, url, error) => const Icon(
+                              Icons.account_circle,
+                              size: 30,
+                            ),
                           ),
-                      progressIndicatorBuilder: (context, url, imageData) =>
-                          CircularProgressIndicator(
-                            strokeWidth: 2,
-                            value: imageData.progress,
-                          ),
-                      errorWidget: (context, url, error) =>
-                      const Icon(
-                        Icons.account_circle,
-                        size: 30,
-                      ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          '${getName(selectedUser['displayName'])}',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        if (houseManager == selectedUser['userID'])
+                          const Row(
+                            children: [
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Icon(
+                                Icons.admin_panel_settings,
+                                color: Colors.white,
+                              )
+                            ],
+                          )
+                      ],
                     ),
                   ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    '${getName(selectedUser['displayName'])}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  if(houseManager == selectedUser['userID']) const Row(
-                    children: [
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(Icons.admin_panel_settings, color: Colors.white,)
-                    ],
-                  )
-                ],
-              ),
-            ),
-          )
+                )
               : const SizedBox();
         }
       },

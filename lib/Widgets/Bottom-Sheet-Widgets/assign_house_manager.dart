@@ -20,7 +20,7 @@ class AssignHouseManager extends StatelessWidget {
                   style: DefaultTextStyle.of(context).style,
                   children: [
                     const TextSpan(
-                        text: 'You will assign ',
+                        text: 'Are you sure to assign ',
                         style: TextStyle(
                           fontSize: 14,
                         )),
@@ -29,7 +29,7 @@ class AssignHouseManager extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold)),
-                    const TextSpan(text: ' as new house manager. So, are you sure?')
+                    const TextSpan(text: ' as new house manager?')
                   ])),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
