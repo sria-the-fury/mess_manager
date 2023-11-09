@@ -23,6 +23,18 @@ class AddHouseToDB{
       CustomGetSnackbar().success('ADD HOUSE', 'Your house has been added.');
     });
   }
+  updateHouse(name, location, houseId) async{
+    await FirebaseFirestore.instance.collection('houses').doc(houseId).set({
+      'houseId' : houseId,
+      'houseName' : name,
+      'houseLocation' : location,
+
+    }, SetOptions(merge: true)).then((value){
+      Get.back(closeOverlays: true);
+      CustomGetSnackbar().success('UPDATE HOUSE', 'Your house has been updated.');
+    });
+
+  }
 
   addMatesToHouse(houseId, houseMateId) async {
     await FirebaseFirestore.instance.collection('users').doc(houseMateId).set({
@@ -55,7 +67,7 @@ class AddHouseToDB{
         }));
   }
 
-  changeHouseManager(houseId, houseMateId) async{
+  assignHouseManager(houseId, houseMateId) async{
     await FirebaseFirestore.instance.collection('houses').doc(houseId).set({
       'houseManager' : houseMateId
 

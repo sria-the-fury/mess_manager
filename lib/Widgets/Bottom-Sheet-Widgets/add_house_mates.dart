@@ -16,7 +16,7 @@ class _AddHouseMatesState extends State<AddHouseMates> {
   late bool searchUser = false;
   @override
   Widget build(BuildContext context) {
-    debugPrint('TypeEmail => $typeEmail');
+
     return Container(
       padding: const EdgeInsets.all(10),
       child:  Column(
@@ -25,6 +25,7 @@ class _AddHouseMatesState extends State<AddHouseMates> {
           const SizedBox(height: 5,),
           TextFormField(
             textAlignVertical: TextAlignVertical.center,
+            keyboardType: TextInputType.emailAddress,
             onChanged: (email) {
               setState(() {
                 searchUser = false;

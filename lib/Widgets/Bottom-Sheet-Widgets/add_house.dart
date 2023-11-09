@@ -3,7 +3,11 @@ import 'package:get/get.dart';
 import 'package:mess_manager/Methods/Firebase/add_house_to_db.dart';
 
 class AddHouse extends StatefulWidget {
-  const AddHouse({super.key});
+  final bool? isEdit;
+  final String? houseName;
+  final String? houseId;
+  final String? houseAddress;
+  const AddHouse({super.key, this.isEdit, this.houseName, this.houseId, this.houseAddress});
 
   @override
   State<AddHouse> createState() => _AddHouseState();
@@ -11,8 +15,8 @@ class AddHouse extends StatefulWidget {
 
 class _AddHouseState extends State<AddHouse> {
   int _index = 0;
-  late String houseName = '';
-  late String houseAddress = '';
+  late String houseName = widget.isEdit == true ? widget.houseName! : '';
+  late String houseAddress = widget.isEdit == true ? widget.houseAddress! : '';
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +51,20 @@ class _AddHouseState extends State<AddHouse> {
                       onPressed: controlDetails.stepIndex != 2 ?
                       controlDetails.onStepContinue :
                       houseName.isNotEmpty && houseAddress.isNotEmpty
-                          && controlDetails.stepIndex == 2 ? () {
+                          && controlDetails.stepIndex == 2 && widget.isEdit != true ? () {
+
                         AddHouseToDB().addHouse(houseName, houseAddress);
                         Get.back(closeOverlays: true);
+                      } :
+                      ((houseName.isNotEmpty && houseName.trim() != widget.houseName!)
+                          || (houseAddress.isNotEmpty && houseAddress.trim() != widget.houseAddress!))
+                          && widget.isEdit == true &&
+                          controlDetails.stepIndex == 2 ? (){
+                        AddHouseToDB().updateHouse(houseName,houseAddress, widget.houseId);
+                        Get.back(closeOverlays: true);
+
                       } : null,
-                      child: Text(controlDetails.stepIndex == 2 ? 'Add' : 'Continue')),
+                      child: Text(controlDetails.stepIndex == 2 ? widget.isEdit == true ? 'Update' : 'Add' : 'Continue')),
                   const SizedBox(width: 5,),
                   if(_index > 0)TextButton(
                       onPressed: controlDetails.onStepCancel,
@@ -103,6 +116,7 @@ class _AddHouseState extends State<AddHouse> {
                   padding: const EdgeInsets.only(bottom: 5, top: 5),
                   child: TextFormField(
                     autofocus: true,
+                    keyboardType: TextInputType.multiline,
                     initialValue: houseAddress,
                     onChanged: (address) {
                       setState(() {
@@ -129,7 +143,7 @@ class _AddHouseState extends State<AddHouse> {
                           TextSpan(text: 'You will be the first'),
                           TextSpan(text: ' member and manager', style: TextStyle(fontWeight: FontWeight.bold),),
                           TextSpan(text: ' of this house.'),
-                          TextSpan(text: ' After creating you can,'),
+                          TextSpan(text: ' After creating, you can'),
                           TextSpan(text: ' add your house mates.', style: TextStyle(fontWeight: FontWeight.bold),),
 
                         ],

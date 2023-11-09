@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mess_manager/Methods/Firebase/add_house_to_db.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -97,6 +98,7 @@ class SearchedUser {
                     IconButton(
                         onPressed: () {
                           AddHouseToDB().addMatesToHouse(houseId, searchedUser['userID']);
+                          Get.back(closeOverlays: true);
                         }, icon: const Icon(Icons.group_add))
                 ],
               );
