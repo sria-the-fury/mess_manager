@@ -26,6 +26,10 @@ class Expenses extends StatelessWidget {
     User? currentUser = FirebaseAuth.instance.currentUser!;
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(onPressed: (){}
+              , icon: const Icon(Icons.calendar_view_month))
+        ], 
         surfaceTintColor: Colors.transparent,
         title: const Text('EXPENSES'),
       ),
@@ -35,92 +39,163 @@ class Expenses extends StatelessWidget {
         }
         else{
           final day = DateTime.now().day;
+          final previousDay = DateTime.now().subtract(const Duration(days: 1)).day;
           final month = DateTime.now().month;
           final year = DateTime.now().year;
           final todayShopping = houseController.houseExpense.where((items) =>
               items['id'] == '$day$month$year'
           );
-          if(todayShopping.isNotEmpty){
+          final yesterdayShopping = houseController.houseExpense.where((items) =>
+          items['id'] == '$previousDay$month$year'
+          );
             return
               SingleChildScrollView(
-                child: Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      color: darkTheme ? Colors.black87 : Colors.teal.shade100,
-                      borderRadius: BorderRadius.circular(10)
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: DataTable(
-
-                          showBottomBorder: true,
-                          columns: const <DataColumn>[
-                            DataColumn(
-                              label: Expanded(
-                                child: Text(
-                                  'Name',
-                                  style: TextStyle(fontStyle: FontStyle.italic),
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'Price ৳',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-
-                          ],
-                          rows: todayShopping.first['shoppingItems'].map<DataRow>((item) {
-
-                            return DataRow(
-                              cells: <DataCell>[
-                                DataCell(SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal ,
-
-                                    child: Text(item['itemName']))),
-                                DataCell(Text(item['itemPrice'].toString())),
-                              ],
-                            );}).toList(),
-                        ),
+                child: Column(
+                  children: [
+                    todayShopping.isNotEmpty ? Container(
+                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: darkTheme ? Colors.black87 : Colors.teal.shade100,
+                          borderRadius: BorderRadius.circular(10)
                       ),
-                      const SizedBox(height: 10,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
                         children: [
-                          Container(
-                              padding: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: Colors.teal[500],
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
+                          const Text('Today', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: DataTable(
 
-                              child: Text('Total:    ৳${getTotalPrice(todayShopping.first['shoppingItems'])}',
-                                style: const TextStyle(fontSize: 18, color: Colors.white),))
+                              showBottomBorder: true,
+                              columns: const <DataColumn>[
+                                DataColumn(
+                                  label: Expanded(
+                                    child: Text(
+                                      'Name',
+                                      style: TextStyle(fontStyle: FontStyle.italic),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Price ৳', textAlign: TextAlign.right,
+                                    style: TextStyle(fontStyle: FontStyle.italic),
+                                  ),
+                                ),
+
+                              ],
+                              rows: todayShopping.first['shoppingItems'].map<DataRow>((item) {
+
+                                return DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal ,
+
+                                        child: Text(item['itemName']))),
+                                    DataCell(Text(item['itemPrice'].toString())),
+                                  ],
+                                );}).toList(),
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      color: Colors.teal[500],
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+
+                                  child: Text('Total:    ৳${getTotalPrice(todayShopping.first['shoppingItems'])}',
+                                    style: const TextStyle(fontSize: 18, color: Colors.white),))
+                            ],
+                          )
                         ],
-                      )
-                    ],
-                  ),
+                      ),
+                    ) :
+                    const Center(child: Text('No shopping for today')),
+                    yesterdayShopping.isNotEmpty ? Container(
+                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: darkTheme ? Colors.black87 : Colors.teal.shade100,
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: Column(
+                        children: [
+                          const Text('Yesterday', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: DataTable(
+
+                              showBottomBorder: true,
+                              columns: const <DataColumn>[
+                                DataColumn(
+                                  label: Expanded(
+                                    child: Text(
+                                      'Name',
+                                      style: TextStyle(fontStyle: FontStyle.italic),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Price ৳',
+                                    style: TextStyle(fontStyle: FontStyle.italic),
+                                  ),
+                                ),
+
+                              ],
+                              rows: yesterdayShopping.first['shoppingItems'].map<DataRow>((item) {
+
+                                return DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal ,
+
+                                        child: Text(item['itemName']))),
+                                    DataCell(Text(item['itemPrice'].toString())),
+                                  ],
+                                );}).toList(),
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      color: Colors.teal[500],
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+
+                                  child: Text('Total:    ৳${getTotalPrice(yesterdayShopping.first['shoppingItems'])}',
+                                    style: const TextStyle(fontSize: 18, color: Colors.white),))
+                            ],
+                          )
+                        ],
+                      ),
+                    ) :
+                    const Center(child: Text('No shopping for yesterday.')),
+                  ],
                 ),
               );
 
           }
-
-          return const Center(child: Text('No shopping for today'));
-        }
-
       }),
       floatingActionButton: Obx((){
         if(houseController.houseData.isNotEmpty){
           final day = DateTime.now().day;
+
           final month = DateTime.now().month;
           final year = DateTime.now().year;
           final todayShopping = houseController.houseExpense.where((items) =>
           items['id'] == '$day$month$year'
           );
+
           if(houseController.houseData['houseManager'] == currentUser.uid && todayShopping.isEmpty){
             return FloatingActionButton(onPressed: (){
               Get.to( () => AddShoppingItems(houseId: houseController.houseData['houseId'],
