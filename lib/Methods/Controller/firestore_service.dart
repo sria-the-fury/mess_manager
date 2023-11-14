@@ -31,6 +31,16 @@ class FirestoreService {
       });
     });
   }
+  Stream<Stream<List<Map<String, dynamic>>>> getHouseExpense() {
+    return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
+      final userData = documentSnapshot.data()!;
+      return _firestore.collection('houses').doc(userData['houseId']).collection('expenses').snapshots().map((querySnapshot){
+        return querySnapshot.docs.map((doc) => doc.data()).toList();
+      });
+    });
+
+  }
+
   Stream<Map<String, dynamic>> getUserData(){
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       return documentSnapshot.data()!;

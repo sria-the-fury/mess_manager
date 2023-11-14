@@ -21,13 +21,13 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
   late String itemPrice = '';
 
   getTotalPrice(items){
-    double totalScores = 0.0;
+    double totalPrice = 0.0;
     // looping over data array
     items.forEach((item){
-      totalScores += item["itemPrice"];
+      totalPrice += item["itemPrice"];
     });
 
-    return totalScores;
+    return totalPrice;
   }
 
 
@@ -130,9 +130,9 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
             ],
           ),
         ),
-        body: SingleChildScrollView(
-          child: shoppingItems.isNotEmpty ?
-          Container(
+        body: shoppingItems.isNotEmpty ?
+        SingleChildScrollView(
+          child: Container(
             margin: const EdgeInsets.all(10),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -225,8 +225,8 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                 )
               ],
             ),
-          ) : const Center(child: Text('Add Groceries'),),
-        ),
+          ),
+        ) : const Center(child: Text('Add Groceries'),),
       ),
     );
   }
