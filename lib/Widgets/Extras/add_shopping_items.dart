@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mess_manager/Methods/Firebase/house_expenses.dart';
 import 'package:uuid/uuid.dart';
@@ -5,7 +6,10 @@ import 'package:uuid/uuid.dart';
 class AddShoppingItems extends StatefulWidget {
   final String houseId;
   final String currentUserId;
-  const AddShoppingItems({super.key, required this.houseId, required this.currentUserId});
+  final bool? isEditTable;
+  final List<dynamic>? shoppingList;
+  const AddShoppingItems({super.key, required this.houseId,
+    required this.currentUserId, this.isEditTable, this.shoppingList});
 
   @override
   State<AddShoppingItems> createState() => _AddShoppingItemsState();
@@ -16,9 +20,13 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
   FocusNode nameNodeFocus = FocusNode();
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  ScrollController tableScrollController = ScrollController();
   late List<Map<String, dynamic>> shoppingItems = [];
   late String itemName = '';
   late String itemPrice = '';
+  late int editItemIndex;
+  late Map<String, dynamic> editItem = {};
+
 
   getTotalPrice(items){
     double totalPrice = 0.0;
@@ -31,11 +39,28 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
   }
 
 
+  @override
+  void initState() {
+    super.initState();
+    if(widget.isEditTable == true){
+      for (var element in widget.shoppingList!) {
+       shoppingItems.add(element);
+      }
+    }
+  }
+
+  void scrollTop() {
+    tableScrollController.animateTo(
+      tableScrollController.positions.isNotEmpty ? tableScrollController.position.maxScrollExtent : 0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final darkTheme = Theme.of(context).brightness.name == 'dark' ? true : false;
-    debugPrint('shoppingItems => $shoppingItems');
+
     return Scaffold(
       body: Scaffold(
         appBar: AppBar(
@@ -49,8 +74,13 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
             children: [
               TextFormField(
                 controller: nameController,
-                autofocus: true,
+                autofocus: widget.isEditTable == true ? false : true,
                 focusNode: nameNodeFocus,
+                onTap: (){
+                  if(widget.isEditTable == true){
+                    scrollTop();
+                  }
+                },
                 onFieldSubmitted: (value){
                   if(value.isNotEmpty){
                     priceNodeFocus.requestFocus();
@@ -90,7 +120,10 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   suffixIcon: IconButton.filled(onPressed: itemName.isNotEmpty
-                      && (itemPrice.toString().isNotEmpty && double.parse(itemPrice) > 0) ? (){
+                      && (itemPrice.toString().isNotEmpty && double.parse(itemPrice) > 0)
+                  && editItem.isEmpty
+
+                      ? (){
                     final Map<String, dynamic> item = {
                       "itemId": const Uuid().v4(),
                       "itemName": itemName,
@@ -98,6 +131,7 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                     };
                     setState(() {
                       shoppingItems.add(item);
+                      scrollTop();
                       itemName = '';
                       itemPrice = '';
                     });
@@ -105,10 +139,23 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                     nameController.clear();
                     priceController.clear();
 
+                  } : editItem.isNotEmpty ? () {
+                    final Map<String, dynamic> editedItem = {
+                      'id': editItem['id'],
+                      'itemName': nameController.text,
+                      'itemPrice': double.parse(priceController.text)
+                    };
+                    setState(() {
+                      shoppingItems.remove(editItem);
+                      shoppingItems.insert(editItemIndex, editedItem);
+                      editItem = {};
+                      priceController.text = '';
+                      nameController.text = '';
+                    });
                   } : null,
                       style: IconButton.styleFrom(
                           backgroundColor: Colors.teal.shade600,),
-                      icon: const Icon(Icons.arrow_upward, color: Colors.white,)),
+                      icon: Icon(editItem.isNotEmpty ? Icons.edit: Icons.arrow_upward,)),
                   focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.only(bottomRight: Radius.circular(25),
                           topRight: Radius.circular(25) ),
@@ -132,6 +179,7 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
         ),
         body: shoppingItems.isNotEmpty ?
         SingleChildScrollView(
+          controller: tableScrollController,
           child: Container(
             margin: const EdgeInsets.all(10),
             padding: const EdgeInsets.all(10),
@@ -141,65 +189,113 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
             ),
             child: Column(
               children: [
-                SizedBox(
+                const Text('Today', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                const SizedBox(height: 10,),
+                Container(
+                  clipBehavior: Clip.hardEdge,
                   width: MediaQuery.of(context).size.width,
-                  child: DataTable(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: darkTheme ? Colors.white : Colors.black,  width: 1),
 
-                    showBottomBorder: true,
-                    columns: const <DataColumn>[
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: DataTable(
+                    columnSpacing: 20,
+                    headingRowColor: MaterialStateProperty.resolveWith((states) {
+                      return Colors.teal[300];
+                    }),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10)
+                      
+                    ),
+
+                    columns:  const <DataColumn>[
+                      DataColumn(
+                        numeric: true,
+                        label: Text('SL',style: TextStyle(color: Colors.black),),
+                      ),
                       DataColumn(
                         label: Expanded(
-                          child: Text(
-                            'Name',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
+                          child: Text('Name',style: TextStyle(color: Colors.black),),
                         ),
                       ),
                       DataColumn(
-                        label: Text(
-                          'Price ৳',
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
+                        label: Text('Price ৳', style: TextStyle(color: Colors.black),),
+                        numeric: true
                       ),
-                      DataColumn(
-                        label: SizedBox(
-                          width: 40,
-                          child: Text(
-                            'Actions',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                      ),
+                      // DataColumn(
+                      //   label: Container(
+                      //     width: 40,
+                      //     child: const Text(
+                      //       'Actions',
+                      //       style: TextStyle(fontStyle: FontStyle.italic),
+                      //     ),
+                      //   ),
+                      // ),
 
                     ],
                     rows: shoppingItems.map<DataRow>((item) {
-                      final itemLength = shoppingItems.length;
 
                       return DataRow(
                       cells: <DataCell>[
+                        DataCell(Text('${shoppingItems.indexOf(item) + 1}')),
                         DataCell(SingleChildScrollView(
                           scrollDirection: Axis.horizontal ,
 
-                            child: Text(item['itemName']))),
-                        DataCell(Text(item['itemPrice'].toString())),
-                        DataCell(SizedBox(
-                          height: 32,
-                          width: 32,
-                          child: IconButton(
-                              onPressed: (){
-                                setState(() {
-                                  shoppingItems.remove(item);
-                                });
+                            child: Text(item['itemName'])), showEditIcon: true,
+                        onTap: (){
+                          setState(() {
+                            editItem = item;
+                            editItemIndex = shoppingItems.indexOf(item);
+                            nameController.text = item['itemName'];
+                            priceController.text = item['itemPrice'].toString();
+                          });
 
-                          },
-                          style: IconButton.styleFrom(
-                            backgroundColor: darkTheme
-                                ? Colors.black87
-                                : Colors.teal.shade600,
-                            side: const BorderSide(
-                                color: Colors.white, width: 2)),
-                              icon: const Icon(Icons.remove_circle, size: 16,)),
-                        ))
+                        }
+                        ),
+                        DataCell(Text(item['itemPrice'].toString()), ),
+                        // DataCell(Row(
+                        //   mainAxisSize: MainAxisSize.min,
+                        //   children: [
+                        //     SizedBox(
+                        //       height: 32,
+                        //       width: 32,
+                        //       child: IconButton(
+                        //           onPressed: (){
+                        //             setState(() {
+                        //               shoppingItems.remove(item);
+                        //             });
+                        //
+                        //       },
+                        //       style: IconButton.styleFrom(
+                        //         backgroundColor: darkTheme
+                        //             ? Colors.black87
+                        //             : Colors.teal.shade600,
+                        //         side: const BorderSide(
+                        //             color: Colors.white, width: 2)),
+                        //           icon: const Icon(Icons.remove_circle, size: 16,)),
+                        //     ),
+                        //     const SizedBox(width: 5,),
+                        //     SizedBox(
+                        //       height: 32,
+                        //       width: 32,
+                        //       child: IconButton(
+                        //           onPressed: (){
+                        //             setState(() {
+                        //               shoppingItems.remove(item);
+                        //             });
+                        //
+                        //           },
+                        //           style: IconButton.styleFrom(
+                        //               backgroundColor: darkTheme
+                        //                   ? Colors.black87
+                        //                   : Colors.teal.shade600,
+                        //               side: const BorderSide(
+                        //                   color: Colors.white, width: 2)),
+                        //           icon: const Icon(Icons.remove_circle, size: 16,)),
+                        //     ),
+                        //   ],
+                        // ))
                       ],
                     );}).toList(),
                   ),
@@ -208,19 +304,22 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    ElevatedButton(onPressed: widget.isEditTable != true ? (){
+                      HouseExpense().addDailyExpense(widget.houseId, shoppingItems, widget.currentUserId);
+                    } : widget.isEditTable == true && !listEquals(shoppingItems, widget.shoppingList)
+                        ? () {
+                      HouseExpense().addDailyExpense(widget.houseId, shoppingItems, widget.currentUserId);
+                    } : null ,
+                        child: Text( widget.isEditTable != true ? 'SUBMIT' : 'UPDATE')),
                     Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: Colors.teal[500],
-                        borderRadius: BorderRadius.circular(10)
-                      ),
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: darkTheme ? Colors.white : Colors.black,  width: 1),
+                            borderRadius: BorderRadius.circular(10)
+                        ),
 
                         child: Text('Total:    ৳${getTotalPrice(shoppingItems)}',
-                          style: const TextStyle(fontSize: 18, color: Colors.white),)),
-                    TextButton(onPressed: (){
-                      HouseExpense().addDailyExpense(widget.houseId, shoppingItems, widget.currentUserId);
-                    },
-                        child: const Text('Submit'))
+                          style: const TextStyle(fontSize: 18),)),
                   ],
                 )
               ],

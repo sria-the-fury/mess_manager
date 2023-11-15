@@ -7,7 +7,8 @@ class FirestoreController extends GetxController {
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   final RxList<Map<String, dynamic>> membersData = <Map<String, dynamic>>[].obs;
-  final RxList<Map<String, dynamic>> houseExpense = <Map<String, dynamic>>[].obs;
+  final RxMap<String, dynamic> houseTodayExpense = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> houseYesterdayExpense = <String, dynamic>{}.obs;
   final RxMap<String, dynamic> userData = <String, dynamic>{}.obs;
   final RxMap<String, dynamic> houseData = <String, dynamic>{}.obs;
 
@@ -15,11 +16,17 @@ class FirestoreController extends GetxController {
   void onReady() {
     super.onReady();
 
-    _firestoreService.getHouseExpense().listen((expenseEvent) {
+    _firestoreService.getHouseTodayExpense().listen((expenseEvent) {
       expenseEvent.listen((streamData) {
-        houseExpense.assignAll(streamData);
+        houseTodayExpense.assignAll(streamData);
       });
     });
+    _firestoreService.getHouseYesterdayExpense().listen((expenseEvent) {
+      expenseEvent.listen((streamData) {
+        houseYesterdayExpense.assignAll(streamData);
+      });
+    });
+
 
     _firestoreService.houseData().listen((streamData) {
       streamData.listen((event) {

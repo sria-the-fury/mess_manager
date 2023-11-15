@@ -29,94 +29,20 @@ class Expenses extends StatelessWidget {
         actions: [
           IconButton(onPressed: (){}
               , icon: const Icon(Icons.calendar_view_month))
-        ], 
+        ],
         surfaceTintColor: Colors.transparent,
         title: const Text('EXPENSES'),
       ),
       body: Obx((){
-        if(houseController.houseExpense.isEmpty){
-          return const Center(child: Text('Add Groceries'),);
-        }
-        else{
-          final day = DateTime.now().day;
-          final previousDay = DateTime.now().subtract(const Duration(days: 1)).day;
-          final month = DateTime.now().month;
-          final year = DateTime.now().year;
-          final todayShopping = houseController.houseExpense.where((items) =>
-              items['id'] == '$day$month$year'
-          );
-          final yesterdayShopping = houseController.houseExpense.where((items) =>
-          items['id'] == '$previousDay$month$year'
-          );
-            return
-              SingleChildScrollView(
+      if(houseController.houseYesterdayExpense.isEmpty && houseController.houseTodayExpense.isEmpty){
+        return const Center(
+          child: Text('No shopping within two days.'),
+        );
+      }
+             return SingleChildScrollView(
                 child: Column(
                   children: [
-                    todayShopping.isNotEmpty ? Container(
-                      margin: const EdgeInsets.all(10),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: darkTheme ? Colors.black87 : Colors.teal.shade100,
-                          borderRadius: BorderRadius.circular(10)
-                      ),
-                      child: Column(
-                        children: [
-                          const Text('Today', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: DataTable(
-
-                              showBottomBorder: true,
-                              columns: const <DataColumn>[
-                                DataColumn(
-                                  label: Expanded(
-                                    child: Text(
-                                      'Name',
-                                      style: TextStyle(fontStyle: FontStyle.italic),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Price ৳', textAlign: TextAlign.right,
-                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                  ),
-                                ),
-
-                              ],
-                              rows: todayShopping.first['shoppingItems'].map<DataRow>((item) {
-
-                                return DataRow(
-                                  cells: <DataCell>[
-                                    DataCell(SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal ,
-
-                                        child: Text(item['itemName']))),
-                                    DataCell(Text(item['itemPrice'].toString())),
-                                  ],
-                                );}).toList(),
-                            ),
-                          ),
-                          const SizedBox(height: 10,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                      color: Colors.teal[500],
-                                      borderRadius: BorderRadius.circular(10)
-                                  ),
-
-                                  child: Text('Total:    ৳${getTotalPrice(todayShopping.first['shoppingItems'])}',
-                                    style: const TextStyle(fontSize: 18, color: Colors.white),))
-                            ],
-                          )
-                        ],
-                      ),
-                    ) :
-                    const Center(child: Text('No shopping for today')),
-                    yesterdayShopping.isNotEmpty ? Container(
+                    houseController.houseYesterdayExpense.isNotEmpty ? Container(
                       margin: const EdgeInsets.all(10),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -126,37 +52,142 @@ class Expenses extends StatelessWidget {
                       child: Column(
                         children: [
                           const Text('Yesterday', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                          SizedBox(
+                          const SizedBox(height: 10,),
+                          Container(
+                            clipBehavior: Clip.hardEdge,
                             width: MediaQuery.of(context).size.width,
-                            child: DataTable(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: darkTheme ? Colors.white : Colors.black,  width: 1),
 
-                              showBottomBorder: true,
-                              columns: const <DataColumn>[
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: DataTable(
+                              columnSpacing: 20,
+                              headingRowColor: MaterialStateProperty.resolveWith((states) {
+                                return Colors.teal[300];
+                              }),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)
+
+                              ),
+
+                              columns:  const <DataColumn>[
+                                DataColumn(
+                                  numeric: true,
+                                  label: Text('SL',style: TextStyle(color: Colors.black),),
+                                ),
                                 DataColumn(
                                   label: Expanded(
-                                    child: Text(
-                                      'Name',
-                                      style: TextStyle(fontStyle: FontStyle.italic),
-                                    ),
+                                    child: Text('Name',style: TextStyle(color: Colors.black),),
                                   ),
                                 ),
                                 DataColumn(
-                                  label: Text(
-                                    'Price ৳',
-                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                  ),
+                                    label: Text('Price ৳', style: TextStyle(color: Colors.black),),
+                                    numeric: true
                                 ),
 
                               ],
-                              rows: yesterdayShopping.first['shoppingItems'].map<DataRow>((item) {
+                              rows: houseController.houseYesterdayExpense['shoppingItems'].map<DataRow>((item) {
+
 
                                 return DataRow(
                                   cells: <DataCell>[
+                                    DataCell(Text('${houseController.houseYesterdayExpense['shoppingItems'].indexOf(item) + 1}')),
                                     DataCell(SingleChildScrollView(
                                         scrollDirection: Axis.horizontal ,
 
-                                        child: Text(item['itemName']))),
-                                    DataCell(Text(item['itemPrice'].toString())),
+                                        child: Text(item['itemName'])),),
+                                    DataCell(Text(item['itemPrice'].toString()), ),
+
+                                  ],
+                                );}).toList(),
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: darkTheme ? Colors.white : Colors.black,  width: 1),
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+
+                                  child: Text('Total:    ৳${getTotalPrice(houseController.houseYesterdayExpense['shoppingItems'])}',
+                                    style: const TextStyle(fontSize: 18),)),
+                            ],
+                          )
+                        ],
+                      ),
+                    ) :
+                    const SizedBox(),
+                    houseController.houseTodayExpense.isNotEmpty ? Container(
+                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: darkTheme ? Colors.black87 : Colors.teal.shade100,
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: Column(
+                        children: [
+                          const Text('Today', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                          const SizedBox(height: 10,),
+                          Container(
+                            clipBehavior: Clip.hardEdge,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: darkTheme ? Colors.white : Colors.black,  width: 1),
+
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: DataTable(
+                              columnSpacing: 20,
+                              headingRowColor: MaterialStateProperty.resolveWith((states) {
+                                return Colors.teal[300];
+                              }),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)
+
+                              ),
+
+                              columns:  const <DataColumn>[
+                                DataColumn(
+                                  numeric: true,
+                                  label: Text('SL',style: TextStyle(color: Colors.black),),
+                                ),
+                                DataColumn(
+                                  label: Expanded(
+                                    child: Text('Name',style: TextStyle(color: Colors.black),),
+                                  ),
+                                ),
+                                DataColumn(
+                                    label: Text('Price ৳', style: TextStyle(color: Colors.black),),
+                                    numeric: true
+                                ),
+                                // DataColumn(
+                                //   label: Container(
+                                //     width: 40,
+                                //     child: const Text(
+                                //       'Actions',
+                                //       style: TextStyle(fontStyle: FontStyle.italic),
+                                //     ),
+                                //   ),
+                                // ),
+
+                              ],
+                              rows: houseController.houseTodayExpense['shoppingItems'].map<DataRow>((item) {
+
+
+                                return DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text('${houseController.houseTodayExpense['shoppingItems'].indexOf(item) + 1}')),
+                                    DataCell(SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal ,
+
+                                        child: Text(item['itemName'])),),
+                                    DataCell(Text(item['itemPrice'].toString()), ),
+
                                   ],
                                 );}).toList(),
                             ),
@@ -165,38 +196,52 @@ class Expenses extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              TextButton(onPressed: (){
+                                Get.to(() => AddShoppingItems(houseId: houseController.houseData['houseId'],
+                                  currentUserId: currentUser.uid,isEditTable: true,
+                                  shoppingList:
+                                  houseController.houseTodayExpense['shoppingItems'],
+                                ),
+                                    transition: Transition.downToUp);
+
+                              },
+                                  child: Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.teal[600],
+                                          borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: const Row(
+                                        children: [
+                                          Icon(Icons.edit, color: Colors.white, size: 16,),
+                                          SizedBox(width: 5,),
+                                          Text('EDIT', style: TextStyle(color: Colors.white),),
+                                        ],
+                                      ))),
                               Container(
                                   padding: const EdgeInsets.all(5),
                                   decoration: BoxDecoration(
-                                      color: Colors.teal[500],
+                                      border: Border.all(color: darkTheme ? Colors.white : Colors.black,  width: 1),
                                       borderRadius: BorderRadius.circular(10)
                                   ),
 
-                                  child: Text('Total:    ৳${getTotalPrice(yesterdayShopping.first['shoppingItems'])}',
-                                    style: const TextStyle(fontSize: 18, color: Colors.white),))
+                                  child: Text('Total:    ৳${getTotalPrice(houseController.houseTodayExpense['shoppingItems'])}',
+                                    style: const TextStyle(fontSize: 18),)),
                             ],
                           )
                         ],
                       ),
                     ) :
-                    const Center(child: Text('No shopping for yesterday.')),
+                    const Center(child: Text('No shopping for today')),
                   ],
                 ),
-              );
-
-          }
-      }),
+              );}
+      ),
       floatingActionButton: Obx((){
         if(houseController.houseData.isNotEmpty){
-          final day = DateTime.now().day;
 
-          final month = DateTime.now().month;
-          final year = DateTime.now().year;
-          final todayShopping = houseController.houseExpense.where((items) =>
-          items['id'] == '$day$month$year'
-          );
-
-          if(houseController.houseData['houseManager'] == currentUser.uid && todayShopping.isEmpty){
+          if(houseController.houseData['houseManager'] == currentUser.uid
+    && houseController.houseTodayExpense.isEmpty){
             return FloatingActionButton(onPressed: (){
               Get.to( () => AddShoppingItems(houseId: houseController.houseData['houseId'],
                   currentUserId: currentUser.uid),

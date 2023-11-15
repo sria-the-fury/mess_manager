@@ -31,15 +31,35 @@ class FirestoreService {
       });
     });
   }
-  Stream<Stream<List<Map<String, dynamic>>>> getHouseExpense() {
+  Stream<Stream<Map<String, dynamic>>> getHouseTodayExpense() {
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       final userData = documentSnapshot.data()!;
-      return _firestore.collection('houses').doc(userData['houseId']).collection('expenses').snapshots().map((querySnapshot){
-        return querySnapshot.docs.map((doc) => doc.data()).toList();
+      final day = DateTime.now().day;
+      //final previousDay = DateTime.now().subtract(const Duration(days: 1)).day;
+      final month = DateTime.now().month;
+      final year = DateTime.now().year;
+      return _firestore.collection('houses').doc(userData['houseId']).collection('expenses').doc('$day$month$year')
+          .snapshots().map((documentSnapshot){
+        return documentSnapshot.exists ? documentSnapshot.data()! : {};
       });
     });
 
   }
+  Stream<Stream<Map<String, dynamic>>> getHouseYesterdayExpense() {
+    return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
+      final userData = documentSnapshot.data()!;
+      final previousDay = DateTime.now().subtract(const Duration(days: 1)).day;
+      final month = DateTime.now().month;
+      final year = DateTime.now().year;
+      return _firestore.collection('houses').doc(userData['houseId']).collection('expenses')
+          .doc('$previousDay$month$year')
+          .snapshots().map((documentSnapshot){
+        return documentSnapshot.exists ? documentSnapshot.data()! : {};
+      });
+    });
+
+  }
+
 
   Stream<Map<String, dynamic>> getUserData(){
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
