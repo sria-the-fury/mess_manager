@@ -75,31 +75,31 @@ class UserPreviewDetails extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
-                  onPressed: () async {
+                  onPressed: selectedMembersData['phoneNumber'] != null ? () async {
                     final Uri url =
-                    Uri.parse('tel:+8801571734206');
+                    Uri.parse('tel:+88${selectedMembersData['phoneNumber']}');
                     if (!await launchUrl(url)) {
                       throw Exception('Could not launch $url');
                     }
-                  },
+                  } : null,
                   icon: const Icon(Icons.call)),
               IconButton(
-                  onPressed: () async {
+                  onPressed: selectedMembersData['whatsappNumber'] != null ?  () async {
                     final Uri url =
-                    Uri.parse('https://wa.me/8801571734206');
+                    Uri.parse('https://wa.me/88${selectedMembersData['whatsappNumber']}');
                     if (!await launchUrl(url)) {
                       throw Exception('Could not launch $url');
                     }
-                  },
+                  } : null,
                   icon: const FaIcon(FontAwesomeIcons.whatsapp)),
               IconButton(
-                  onPressed: () async {
+                  onPressed: selectedMembersData['messengerLink'] != null ? () async {
                     final Uri url =
-                    Uri.parse('https://m.me/tanik.anas');
+                    Uri.parse('${selectedMembersData['messengerLink']}');
                     if (!await launchUrl(url)) {
                       throw Exception('Could not launch $url');
                     }
-                  },
+                  } : null,
                   icon: const FaIcon(
                       FontAwesomeIcons.facebookMessenger)),
             ],

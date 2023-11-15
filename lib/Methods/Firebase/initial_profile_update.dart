@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get.dart';
+import 'package:mess_manager/Widgets/Extras/custom_get_snackbar.dart';
 
 class InitialProfileUpdate {
   updatePhoto(url, uid) async {
@@ -33,5 +35,20 @@ class InitialProfileUpdate {
         'photoURL': downloadUrl,
       }, SetOptions(merge: true));
     }
+  }
+
+  updateSocialContact (userId, phoneNumber, messengerLink, whatsappNumber) async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .set({
+      "phoneNumber" : phoneNumber,
+      "messengerLink" : messengerLink,
+      "whatsappNumber" : whatsappNumber,
+    }, SetOptions(merge: true)).then((value) {
+      Get.back(closeOverlays: true);
+      CustomGetSnackbar().success('SOCIAL CONTACT', 'Your social contacts have been added');
+    });
+
   }
 }

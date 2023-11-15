@@ -95,35 +95,32 @@ class UserPreview extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircleAvatar(
-                          radius: 15,
-                          child: CachedNetworkImage(
-                            width: 30,
-                            height: 30,
-                            imageUrl: selectedUser['photoURL'],
-                            imageBuilder: (context, imageProvider) => Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
-                                  // colorFilter: const ColorFilter.mode(
-                                  //     Colors.red, BlendMode.colorBurn)
-                                ),
+                        CachedNetworkImage(
+                          width: 30,
+                          height: 30,
+                          imageUrl: selectedUser['photoURL'],
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: Colors.white, width: 2),
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                // colorFilter: const ColorFilter.mode(
+                                //     Colors.red, BlendMode.colorBurn)
                               ),
                             ),
-                            progressIndicatorBuilder:
-                                (context, url, imageData) =>
-                                    CircularProgressIndicator(
-                              strokeWidth: 2,
-                              value: imageData.progress,
-                            ),
-                            errorWidget: (context, url, error) => const Icon(
-                              Icons.account_circle,
-                              size: 30,
-                            ),
+                          ),
+                          progressIndicatorBuilder:
+                              (context, url, imageData) =>
+                                  CircularProgressIndicator(
+                            strokeWidth: 2,
+                            value: imageData.progress,
+                          ),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.account_circle,
+                            size: 30,
                           ),
                         ),
                         const SizedBox(

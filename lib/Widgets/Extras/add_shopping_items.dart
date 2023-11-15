@@ -168,7 +168,7 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                           : editItem.isNotEmpty
                               ? () {
                                   final Map<String, dynamic> editedItem = {
-                                    'id': editItem['id'],
+                                    'id': editItem['itemId'],
                                     'itemName': nameController.text,
                                     'itemPrice':
                                         double.parse(priceController.text)
@@ -304,7 +304,8 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                                     SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Text(item['itemName'])),
-                                    showEditIcon: true, onTap: () {
+                                    showEditIcon: true,
+                                    onTap: () {
                                   setState(() {
                                     editItem = item;
                                     editItemIndex = shoppingItems.indexOf(item);

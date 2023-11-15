@@ -1,12 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
+import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/update_contact.dart';
+import 'package:mess_manager/Widgets/Custom-Bottom-Sheet/bottom_sheet.dart';
 import 'package:mess_manager/Widgets/Extras/circular_profile.dart';
 import 'package:mess_manager/Widgets/Extras/user_sign_provider.dart';
 import 'package:mess_manager/Widgets/Extras/users_basic_data.dart';
-import 'package:mess_manager/Widgets/Route/update_user_profile.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -18,6 +21,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   late bool notificationSwitch = GetStorage().read('switchNotification');
   late String appTheme = GetStorage().read('themeMode');
+  final FirestoreController userController = Get.put(FirestoreController());
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +60,81 @@ class _ProfileState extends State<Profile> {
                             UserBasicData(authUser: authUser)
                           ],
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+
+                        Obx((){
+                          if(userController.userData.isEmpty){
+                            return const SizedBox();
+                          }
+                          else{
+                            final contactNo =  userController.userData['phoneNumber'];
+                            final messengerLink =  userController.userData['messengerLink'];
+                            final whatsappNumber =  userController.userData['whatsappNumber'];
+                            return GestureDetector(
+                              onTap: () {
+                                if(contactNo == null && messengerLink == null && whatsappNumber == null){
+                                  CustomBottomSheet().showBottomSheet(context, UpdateContact(userId: authUser.uid,));
+                                } else{
+                                  CustomBottomSheet()
+                                      .showBottomSheet(context,
+                                      UpdateContact(userId: authUser.uid, isEdit: true,
+                                        phoneNumber: contactNo,
+                                      messengerLink: messengerLink,
+                                      whatsappNumber: whatsappNumber,));
+                                }
+
+                                },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: darkTheme ? Colors.black87 : Colors.teal.shade100,
+                                    borderRadius: BorderRadius.circular(30)
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    IconButton(
+                                        onPressed: contactNo != null ? () async {
+                                          final Uri url =
+                                          Uri.parse('tel:+88$contactNo');
+                                          if (!await launchUrl(url)) {
+                                            throw Exception('Could not launch $url');
+                                          }
+                                        } : null ,
+                                        padding: EdgeInsets.zero,
+                                        icon: const Icon(Icons.call)),
+                                    IconButton(
+                                        onPressed: whatsappNumber != null ? () async {
+                                          final Uri url =
+                                          Uri.parse('https://wa.me/88$whatsappNumber');
+                                          if (!await launchUrl(url)) {
+                                            throw Exception('Could not launch $url');
+                                          }
+                                        } : null ,
+                                        padding: EdgeInsets.zero,
+                                        icon: const FaIcon(FontAwesomeIcons.whatsapp)),
+                                    IconButton(
+                                        onPressed: messengerLink != null ? () async {
+                                          final Uri url =
+                                          Uri.parse('$messengerLink');
+                                          if (!await launchUrl(url)) {
+                                            throw Exception('Could not launch $url');
+                                          }
+                                        } : null,
+                                        icon: const FaIcon(
+                                            FontAwesomeIcons.facebookMessenger)),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+
+
+
+                        }),
+
                         const SizedBox(
                           height: 10,
                         ),
@@ -102,122 +181,7 @@ class _ProfileState extends State<Profile> {
                   ],
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: darkTheme ? Colors.black87 : Colors.teal[100],
-                    borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  children: [
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(Icons.account_circle),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          'User\'s Settings',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        )
-                      ],
-                    ),
-                    InkWell(
-                      onTap: () => Get.to(() => const UpdateUserProfile(),
-                          transition: Transition.leftToRight),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.manage_accounts),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Update Profile',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
-                              Text(
-                                'Set Name, Phone, Date of Birth, etc',
-                                style:
-                                    TextStyle(fontSize: 12, color: darkTheme ? Colors.white54 : Colors.black54),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(
-                      color: Colors.white54,
-                      thickness: 1,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Get.delete<FirestoreController>();
-                        FirebaseAuth.instance.signOut();
-                        },
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.logout,
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Logout',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                              Text(
-                                'You can login again.',
-                                style:
-                                TextStyle(fontSize: 12, color: darkTheme ? Colors.white54 : Colors.black54),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(
-                      color: Colors.white54,
-                      thickness: 1,
-                    ),
-                     Row(
-                      children: [
-                        const Icon(
-                          Icons.person_remove,
-                          color: Colors.red,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Delete Profile',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red)),
-                            Text(
-                              'Deleting profile may lose all of your data',
-                              style:
-                                  TextStyle(fontSize: 12, color: darkTheme ? Colors.white54 : Colors.black54),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+
               Container(
                 margin: const EdgeInsets.only(left: 10, right: 10),
                 padding: const EdgeInsets.all(5),
@@ -368,6 +332,40 @@ class _ProfileState extends State<Profile> {
                           ],
                         )
                       ],
+                    ),
+                    const Divider(
+                      color: Colors.white54,
+                      thickness: 1,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.delete<FirestoreController>();
+                        FirebaseAuth.instance.signOut();
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.logout,
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Logout',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                              Text(
+                                'You can login again.',
+                                style:
+                                TextStyle(fontSize: 12, color: darkTheme ? Colors.white54 : Colors.black54),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
