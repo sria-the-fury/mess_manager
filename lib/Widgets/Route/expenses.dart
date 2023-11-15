@@ -165,16 +165,6 @@ class Expenses extends StatelessWidget {
                                     label: Text('Price ৳', style: TextStyle(color: Colors.black),),
                                     numeric: true
                                 ),
-                                // DataColumn(
-                                //   label: Container(
-                                //     width: 40,
-                                //     child: const Text(
-                                //       'Actions',
-                                //       style: TextStyle(fontStyle: FontStyle.italic),
-                                //     ),
-                                //   ),
-                                // ),
-
                               ],
                               rows: houseController.houseTodayExpense['shoppingItems'].map<DataRow>((item) {
 
@@ -194,9 +184,11 @@ class Expenses extends StatelessWidget {
                           ),
                           const SizedBox(height: 10,),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: houseController.houseTodayExpense['addedBy'] == currentUser.uid
+                                ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
                             children: [
-                              TextButton(onPressed: (){
+                              if(houseController.houseTodayExpense['addedBy'] == currentUser.uid)
+                                TextButton(onPressed: (){
                                 Get.to(() => AddShoppingItems(houseId: houseController.houseData['houseId'],
                                   currentUserId: currentUser.uid,isEditTable: true,
                                   shoppingList:

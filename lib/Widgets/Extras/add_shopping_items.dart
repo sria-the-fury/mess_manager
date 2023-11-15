@@ -292,10 +292,6 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                                                 shoppingItems.remove(item);
                                               });
                                             },
-                                            style: IconButton.styleFrom(
-                                                backgroundColor: darkTheme
-                                                    ? Colors.black87
-                                                    : Colors.teal.shade600,),
                                             icon: const Icon(
                                               Icons.remove_circle,
                                               color: Colors.red,
