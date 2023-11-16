@@ -42,9 +42,9 @@ class InitialProfileUpdate {
         .collection('users')
         .doc(userId)
         .set({
-      "phoneNumber" : phoneNumber,
-      "messengerLink" : messengerLink,
-      "whatsappNumber" : whatsappNumber,
+      "phoneNumber" : phoneNumber.length == 11 ? phoneNumber : FieldValue.delete(),
+      "messengerLink" : messengerLink.length > 16 ? messengerLink : FieldValue.delete() ,
+      "whatsappNumber" : whatsappNumber.length == 11 ? whatsappNumber :  FieldValue.delete(),
     }, SetOptions(merge: true)).then((value) {
       Get.back(closeOverlays: true);
       CustomGetSnackbar().success('SOCIAL CONTACT', 'Your social contacts have been added');

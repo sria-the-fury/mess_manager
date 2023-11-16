@@ -26,28 +26,57 @@ class UpdateContact extends StatefulWidget {
 class _UpdateContactState extends State<UpdateContact> {
   TextEditingController whatsappTextController = TextEditingController();
   int _index = 0;
-  late String phoneNumber = widget.isEdit == true ? widget.phoneNumber! : '';
+  late String phoneNumber = widget.isEdit == true && widget.phoneNumber != null
+      ? widget.phoneNumber!
+      : '';
   late String messengerLink =
-      widget.isEdit == true ? widget.messengerLink! : '';
+      widget.isEdit == true && widget.messengerLink != null
+          ? widget.messengerLink!
+          : '';
   late String whatsappNumber = widget.isEdit == true &&
+          widget.phoneNumber != null &&
+          widget.whatsappNumber != null &&
           widget.phoneNumber! == widget.whatsappNumber!
       ? widget.phoneNumber!
-      : widget.isEdit == true && widget.phoneNumber! != widget.whatsappNumber!
+      : widget.isEdit == true &&
+              widget.phoneNumber != null &&
+              widget.whatsappNumber != null &&
+              widget.phoneNumber != widget.whatsappNumber
           ? widget.whatsappNumber!
           : '';
   late bool whatsappIsSame =
-      widget.isEdit == true && widget.phoneNumber! == widget.whatsappNumber!
+      widget.isEdit == true && widget.phoneNumber != null &&
+          widget.whatsappNumber != null && widget.phoneNumber! == widget.whatsappNumber
           ? true
           : false;
 
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.isEdit == true && widget.whatsappNumber != null && widget.whatsappNumber != null
+        && widget.phoneNumber != widget.whatsappNumber){
+      setState(() {
+        whatsappTextController.text = widget.whatsappNumber!;
+      });
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: const EdgeInsets.all(10),
       child: Column(
         children: [
           Stepper(
             currentStep: _index,
+            onStepTapped: (int index) {
+              setState(() {
+                _index = index;
+              });
+            },
             connectorColor: MaterialStateProperty.resolveWith((states) {
               if (states.contains(MaterialState.selected)) {
                 return _index == 1 ? Colors.blue : Colors.teal.shade500;
@@ -71,11 +100,17 @@ class _UpdateContactState extends State<UpdateContact> {
               }
               return Icon(
                 Icons.check_circle,
-                color: index == 0 && phoneNumber.isNotEmpty
+                color: index == 0 &&
+                        phoneNumber.isNotEmpty &&
+                        phoneNumber.length == 11
                     ? Colors.green
-                    : index == 1 && messengerLink.isNotEmpty
+                    : index == 1 &&
+                            messengerLink.isNotEmpty &&
+                            messengerLink.length > 16
                         ? Colors.green
-                        : index == 2 && whatsappNumber.isNotEmpty
+                        : index == 2 &&
+                                whatsappNumber.isNotEmpty &&
+                                whatsappNumber.length == 11
                             ? Colors.green
                             : Colors.grey,
               );
@@ -86,34 +121,44 @@ class _UpdateContactState extends State<UpdateContact> {
                   ElevatedButton(
                       onPressed: controlDetails.stepIndex != 3
                           ? controlDetails.onStepContinue
-                          : phoneNumber.isNotEmpty &&
-                                  messengerLink.isNotEmpty &&
-                                  whatsappNumber.isNotEmpty &&
-                                  phoneNumber.length == 11 &&
-                                  whatsappNumber.length == 11 &&
-                                  controlDetails.stepIndex == 3 &&
-                                  widget.isEdit != true
+                          : ((phoneNumber.isNotEmpty &&
+                                          phoneNumber.length == 11) ||
+                                      (messengerLink.isNotEmpty &&
+                                          messengerLink.length > 16) ||
+                                      (whatsappNumber.isNotEmpty &&
+                                          whatsappNumber.length == 11)) &&
+                                  widget.isEdit != true && controlDetails.stepIndex == 3
                               ? () {
                                   InitialProfileUpdate().updateSocialContact(
                                       widget.userId,
                                       phoneNumber,
                                       messengerLink,
                                       whatsappNumber);
+                                  Get.back(closeOverlays: true);
                                 }
                               : ((phoneNumber.isNotEmpty &&
                                               phoneNumber !=
-                                                  widget.phoneNumber) ||
+                                                  widget.phoneNumber &&
+                                              phoneNumber.length == 11) ||
                                           (messengerLink.isNotEmpty &&
-                                              messengerLink.trim() !=
-                                                  widget.messengerLink!) ||
+                                              messengerLink !=
+                                                  widget.messengerLink &&
+                                              messengerLink.length > 16) ||
                                           (whatsappNumber.isNotEmpty &&
                                               whatsappNumber !=
-                                                  widget.whatsappNumber!)) ||
+                                                  widget.whatsappNumber &&
+                                              whatsappNumber.length == 11)) &&
                                       widget.isEdit == true &&
-                                          phoneNumber.length == 11 &&
-                                          whatsappNumber.length == 11 &&
-                                          controlDetails.stepIndex == 3
-                                  ? () {}
+                                      controlDetails.stepIndex == 3
+                                  ? () {
+                                      InitialProfileUpdate()
+                                          .updateSocialContact(
+                                              widget.userId,
+                                              phoneNumber,
+                                              messengerLink,
+                                              whatsappNumber);
+                                      Get.back(closeOverlays: true);
+                                    }
                                   : null,
                       child: Text(controlDetails.stepIndex == 3
                           ? widget.isEdit == true
@@ -206,7 +251,7 @@ class _UpdateContactState extends State<UpdateContact> {
                               icon: Icon(whatsappIsSame == true
                                   ? Icons.check_box
                                   : Icons.check_box_outline_blank)),
-                          const Text('Whatsapp is same as Phone?')
+                          const Text('is this also Whatsapp?')
                         ],
                       )
                     ],
@@ -247,6 +292,9 @@ class _UpdateContactState extends State<UpdateContact> {
                             messengerLink = messenger;
                           });
                         },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'(\s)')),
+                        ],
                         decoration: const InputDecoration(
                           labelText: 'Facebook Messenger Link',
                           hintText: 'https://m.me/user_name',
@@ -305,18 +353,63 @@ class _UpdateContactState extends State<UpdateContact> {
               Step(
                   title: const Text('Finally'),
                   isActive: _index == 3 ? true : false,
-                  content: Row(
+                  content: Column(
                     children: [
-                      phoneNumber.isNotEmpty &&
-                              phoneNumber.length == 11 &&
-                              whatsappNumber.length == 11 &&
-                              messengerLink.isNotEmpty &&
-                              whatsappNumber.isNotEmpty
-                          ? const Text('Everything seems fine.')
-                          : const Text(
-                              'Check if you left blank any data.',
-                              style: TextStyle(color: Colors.red),
-                            ),
+                      Row(
+                        children: [
+                          phoneNumber.isNotEmpty &&
+                                  phoneNumber.length == 11 &&
+                                  messengerLink.isNotEmpty &&
+                                  messengerLink.length > 16 &&
+                                  whatsappNumber.isNotEmpty &&
+                                  whatsappNumber.length == 11
+                              ? const Text('Everything seems fine.')
+                              : const Text(
+                                  'Check if you left any blank.',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.call,
+                            color: phoneNumber.isEmpty
+                                ? Colors.grey.shade600
+                                : phoneNumber.length == 11
+                                    ? Colors.green
+                                    : Colors.red,
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          FaIcon(
+                            FontAwesomeIcons.facebookMessenger,
+                            color: messengerLink.isEmpty
+                                ? Colors.grey.shade600
+                                : messengerLink.length > 16
+                                    ? Colors.green
+                                    : Colors.red,
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          FaIcon(
+                            FontAwesomeIcons.whatsapp,
+                            color: whatsappNumber.isEmpty
+                                ? Colors.grey.shade600
+                                : whatsappNumber.length == 11
+                                    ? Colors.green
+                                    : Colors.red,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                     ],
                   ))
             ],

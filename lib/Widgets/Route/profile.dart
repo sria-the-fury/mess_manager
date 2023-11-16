@@ -87,7 +87,7 @@ class _ProfileState extends State<Profile> {
 
                                 },
                               child: Container(
-                                padding: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                     color: darkTheme ? Colors.black87 : Colors.teal.shade100,
                                     borderRadius: BorderRadius.circular(30)
@@ -106,16 +106,6 @@ class _ProfileState extends State<Profile> {
                                         padding: EdgeInsets.zero,
                                         icon: const Icon(Icons.call)),
                                     IconButton(
-                                        onPressed: whatsappNumber != null ? () async {
-                                          final Uri url =
-                                          Uri.parse('https://wa.me/88$whatsappNumber');
-                                          if (!await launchUrl(url)) {
-                                            throw Exception('Could not launch $url');
-                                          }
-                                        } : null ,
-                                        padding: EdgeInsets.zero,
-                                        icon: const FaIcon(FontAwesomeIcons.whatsapp)),
-                                    IconButton(
                                         onPressed: messengerLink != null ? () async {
                                           final Uri url =
                                           Uri.parse('$messengerLink');
@@ -125,6 +115,16 @@ class _ProfileState extends State<Profile> {
                                         } : null,
                                         icon: const FaIcon(
                                             FontAwesomeIcons.facebookMessenger)),
+                                    IconButton(
+                                        onPressed: whatsappNumber != null ? () async {
+                                          final Uri url =
+                                          Uri.parse('https://wa.me/88$whatsappNumber');
+                                          if (!await launchUrl(url)) {
+                                            throw Exception('Could not launch $url');
+                                          }
+                                        } : null ,
+                                        padding: EdgeInsets.zero,
+                                        icon: const FaIcon(FontAwesomeIcons.whatsapp)),
                                   ],
                                 ),
                               ),

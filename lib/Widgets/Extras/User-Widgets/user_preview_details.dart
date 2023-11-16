@@ -55,7 +55,14 @@ class UserPreviewDetails extends StatelessWidget {
                 fontSize: 16, fontWeight: FontWeight.bold),
           ),
           if(houseManager == selectedMembersData['userID'])
-            const Text('House Manager', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.admin_panel_settings),
+                SizedBox(width: 5,),
+                Text('House Manager', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
+              ],
+            ),
           RichText(
               text: TextSpan(
                   style: DefaultTextStyle.of(context).style,
@@ -84,15 +91,6 @@ class UserPreviewDetails extends StatelessWidget {
                   } : null,
                   icon: const Icon(Icons.call)),
               IconButton(
-                  onPressed: selectedMembersData['whatsappNumber'] != null ?  () async {
-                    final Uri url =
-                    Uri.parse('https://wa.me/88${selectedMembersData['whatsappNumber']}');
-                    if (!await launchUrl(url)) {
-                      throw Exception('Could not launch $url');
-                    }
-                  } : null,
-                  icon: const FaIcon(FontAwesomeIcons.whatsapp)),
-              IconButton(
                   onPressed: selectedMembersData['messengerLink'] != null ? () async {
                     final Uri url =
                     Uri.parse('${selectedMembersData['messengerLink']}');
@@ -102,6 +100,15 @@ class UserPreviewDetails extends StatelessWidget {
                   } : null,
                   icon: const FaIcon(
                       FontAwesomeIcons.facebookMessenger)),
+              IconButton(
+                  onPressed: selectedMembersData['whatsappNumber'] != null ?  () async {
+                    final Uri url =
+                    Uri.parse('https://wa.me/88${selectedMembersData['whatsappNumber']}');
+                    if (!await launchUrl(url)) {
+                      throw Exception('Could not launch $url');
+                    }
+                  } : null,
+                  icon: const FaIcon(FontAwesomeIcons.whatsapp)),
             ],
           ),
           if (currentUserId == houseManager &&
