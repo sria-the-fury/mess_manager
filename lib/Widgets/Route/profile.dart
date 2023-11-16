@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
 import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/update_contact.dart';
+import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/update_profession_hometown.dart';
 import 'package:mess_manager/Widgets/Custom-Bottom-Sheet/bottom_sheet.dart';
 import 'package:mess_manager/Widgets/Extras/circular_profile.dart';
 import 'package:mess_manager/Widgets/Extras/user_sign_provider.dart';
@@ -57,7 +58,12 @@ class _ProfileState extends State<Profile> {
                                 imageHeight: 120,
                               updatePhoto: true,
                             ),
-                            UserBasicData(authUser: authUser)
+                            Obx((){
+                              if(userController.userData.isEmpty){
+                                return const SizedBox();
+                              }
+                              return UserBasicData(authUser: authUser, userData: userController.userData);
+                            })
                           ],
                         ),
                         const SizedBox(
@@ -131,51 +137,87 @@ class _ProfileState extends State<Profile> {
                             );
                           }
 
-
-
                         }),
 
                         const SizedBox(
                           height: 10,
                         ),
-                        Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: darkTheme ? Colors.black87 : Colors.teal[500],
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: const Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.badge,
-                                        color: Colors.white, size: 18),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text('Your profession',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 15)),
-                                  ],
-                                ),
-                                Divider(
-                                  thickness: 1,
-                                  color: Colors.white54,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.location_city,
-                                        color: Colors.white, size: 18),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text('Your home town',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 15)),
-                                  ],
-                                ),
-                              ],
-                            )),
+                        Obx((){
+                          if(userController.userData.isEmpty){
+                            return const SizedBox();
+
+                          }
+                          else{
+                            final userRole =  userController.userData['role'];
+                            final userWorkPlace =  userController.userData['orgName'];
+                            final homeTown =  userController.userData['homeTown'];
+                            return GestureDetector(
+                              onTap: (){
+                                if(userRole == null && homeTown == null && userWorkPlace ==  null){
+                                  CustomBottomSheet().showBottomSheet(context,
+                                      UpdateProfessionHometown(userId: authUser.uid));
+                                } else{
+                                  CustomBottomSheet().showBottomSheet(context,
+                                      UpdateProfessionHometown(userId: authUser.uid,
+                                      isEdit: true,
+                                        role: userRole,
+                                        orgName: userWorkPlace,
+                                        homeTown: homeTown,
+                                      ));
+                                }
+
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      color: darkTheme ? Colors.black87 : Colors.teal[500],
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child:  Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                           Icon(Icons.badge,
+                                              color: userRole != null && userWorkPlace != null
+                                                  ? Colors.white :  Colors.grey.shade600, size: 18),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Expanded(
+                                            child: Text(userRole != null && userWorkPlace != null
+                                                ? "$userRole @ $userWorkPlace" : 'Your profession',
+                                                style:  TextStyle(
+                                                    color: userRole != null && userWorkPlace != null
+                                                        ? Colors.white :  Colors.grey.shade600, fontSize: 15)),
+                                          ),
+                                        ],
+                                      ),
+                                      const Divider(
+                                        thickness: 1,
+                                        color: Colors.white54,
+                                      ),
+                                       Row(
+                                        children: [
+                                           Icon(Icons.location_city,
+                                              color: homeTown != null
+                                                  ? Colors.white :  Colors.grey.shade600, size: 18),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Expanded(child: Text(homeTown != null ? '$homeTown' : 'Your home town',
+                                              style: TextStyle(
+                                                  color: homeTown != null
+                                                      ? Colors.white :  Colors.grey.shade600, fontSize: 15)),)
+
+                                        ],
+                                      ),
+                                    ],
+                                  )),
+                            );
+                          }
+
+                        })
+
                       ],
                     ),
                   ],

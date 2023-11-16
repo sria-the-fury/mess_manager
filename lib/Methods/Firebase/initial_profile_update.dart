@@ -49,6 +49,19 @@ class InitialProfileUpdate {
       Get.back(closeOverlays: true);
       CustomGetSnackbar().success('SOCIAL CONTACT', 'Your social contacts have been added');
     });
+  }
 
+  updateProfAndHome (userId, homeTown, role, orgName) async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .set({
+      "homeTown" : homeTown.length > 5 ? homeTown : FieldValue.delete(),
+      "role" : role.length > 2 ? role : FieldValue.delete() ,
+      "orgName" : orgName.length > 5 ? orgName :  FieldValue.delete(),
+    }, SetOptions(merge: true)).then((value) {
+      Get.back(closeOverlays: true);
+      CustomGetSnackbar().success('PROF. & HOMETOWN', 'Your Prof and hometown have been added');
+    });
   }
 }
