@@ -124,7 +124,7 @@ class _ProfileState extends State<Profile> {
                                           Icons.cake,
                                           size: 22,
                                           color: userBirthday != null
-                                              ? Colors.white
+                                              ? (darkTheme ? Colors.white : Colors.black)
                                               : Colors.grey.shade600,
                                         ),
                                       ),
@@ -144,7 +144,7 @@ class _ProfileState extends State<Profile> {
                                           'Birthday',
                                           style: TextStyle(
                                               color: userBirthday != null
-                                                  ? Colors.white
+                                                  ? (darkTheme ? Colors.white : Colors.black)
                                                   : Colors.grey.shade600),
                                         ),
                                       )
