@@ -64,4 +64,16 @@ class InitialProfileUpdate {
       CustomGetSnackbar().success('PROF. & HOMETOWN', 'Your Prof and hometown have been added');
     });
   }
+
+  updateDateOfBirth (userId, dob) async{
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .set({
+      "birthday": dob
+    }, SetOptions(merge: true)).then((value) {
+      Get.back(closeOverlays: true);
+      CustomGetSnackbar().success('BIRTHDAY', 'Your date of birth has been update');
+    });
+  }
 }

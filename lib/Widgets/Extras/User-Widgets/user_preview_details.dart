@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/assign_house_manager.dart';
 import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/remove_house_mates.dart';
 import 'package:mess_manager/Widgets/Custom-Bottom-Sheet/bottom_sheet.dart';
@@ -20,6 +21,14 @@ class UserPreviewDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    getBirthdayDate(date) {
+      DateTime dateInMillSeconds = DateTime.fromMillisecondsSinceEpoch(
+        date.seconds * 1000,
+      );
+
+      return DateFormat('d MMMM').format(dateInMillSeconds);
+    }
+
     return Container(
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
@@ -104,7 +113,7 @@ class UserPreviewDetails extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if(currentUserId != selectedMembersData['userID']) const Text('Wish him on '),
-                const UsersBasicDataWidget(userData: '29th August', iconName: Icons.cake),
+                 UsersBasicDataWidget(userData: getBirthdayDate(selectedMembersData['birthday']), iconName: Icons.cake),
               ],
             ),
             if(currentUserId != selectedMembersData['userID'])Row(

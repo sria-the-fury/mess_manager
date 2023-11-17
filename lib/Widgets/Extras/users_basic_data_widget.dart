@@ -15,6 +15,7 @@ class UsersBasicDataWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(iconName, size: (fontSize! + 2),),
         const SizedBox(
