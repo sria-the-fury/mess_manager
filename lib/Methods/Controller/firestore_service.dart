@@ -35,7 +35,6 @@ class FirestoreService {
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       final userData = documentSnapshot.data()!;
       final day = DateTime.now().day;
-      //final previousDay = DateTime.now().subtract(const Duration(days: 1)).day;
       final month = DateTime.now().month;
       final year = DateTime.now().year;
       return _firestore.collection('houses').doc(userData['houseId']).collection('expenses').doc('$day$month$year')
@@ -48,11 +47,11 @@ class FirestoreService {
   Stream<Stream<Map<String, dynamic>>> getHouseYesterdayExpense() {
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       final userData = documentSnapshot.data()!;
-      final previousDay = DateTime.now().subtract(const Duration(days: 1)).day;
-      final month = DateTime.now().month;
-      final year = DateTime.now().year;
+      final previousDate = DateTime.now().subtract(const Duration(days: 1));
+      final month = previousDate.month;
+      final year = previousDate.year;
       return _firestore.collection('houses').doc(userData['houseId']).collection('expenses')
-          .doc('$previousDay$month$year')
+          .doc('${previousDate.day}$month$year')
           .snapshots().map((documentSnapshot){
         return documentSnapshot.exists ? documentSnapshot.data()! : {};
       });
