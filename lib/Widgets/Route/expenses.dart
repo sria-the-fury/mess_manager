@@ -193,6 +193,7 @@ class Expenses extends StatelessWidget {
                                   currentUserId: currentUser.uid,isEditTable: true,
                                   shoppingList:
                                   houseController.houseTodayExpense['shoppingItems'],
+                                  expenseDocId: houseController.houseTodayExpense['id'],
                                 ),
                                     transition: Transition.downToUp);
 

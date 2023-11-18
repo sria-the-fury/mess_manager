@@ -20,4 +20,15 @@ class HouseExpense{
     });
 
   }
+
+  void dropExpenseTable(houseId) async {
+    final day = DateTime.now().day;
+    final month = DateTime.now().month;
+    final year = DateTime.now().year;
+    await FirebaseFirestore.instance.collection('houses').doc(houseId).collection('expenses').doc('$day$month$year').delete().then((value){
+      Get.back(closeOverlays: true);
+      CustomGetSnackbar().warning('EXPENSES', 'Today\'s expenses have been removed. ');
+    });
+
+  }
 }

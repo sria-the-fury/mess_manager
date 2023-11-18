@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mess_manager/Methods/Firebase/house_expenses.dart';
+import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/drop_expense_table.dart';
+import 'package:mess_manager/Widgets/Custom-Bottom-Sheet/bottom_sheet.dart';
 import 'package:uuid/uuid.dart';
 
 class AddShoppingItems extends StatefulWidget {
@@ -9,12 +11,13 @@ class AddShoppingItems extends StatefulWidget {
   final String currentUserId;
   final bool? isEditTable;
   final List<dynamic>? shoppingList;
+  final String? expenseDocId;
   const AddShoppingItems(
       {super.key,
       required this.houseId,
       required this.currentUserId,
       this.isEditTable,
-      this.shoppingList});
+      this.shoppingList, this.expenseDocId});
 
   @override
   State<AddShoppingItems> createState() => _AddShoppingItemsState();
@@ -247,7 +250,23 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                             DataColumn(
                               numeric: true,
                               label: willDeleteRow == true ?
-                              const Icon(Icons.delete_forever, color: Colors.white)
+                              SizedBox(
+                                height: 32,
+                                width: 32,
+                                child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed:  widget.isEditTable == true ? () {
+                                      CustomBottomSheet().showBottomSheet(context,
+                                          DropExpenseTable(houseId: widget.houseId,));
+
+
+                                    } : null,
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                      size: 22,
+                                    )),
+                              )
                                   : const Text(
                                 'SL',
                                 style: TextStyle(color: Colors.black),
@@ -270,16 +289,6 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                           ],
                           rows: shoppingItems.map<DataRow>((item) {
                             return DataRow(
-                              color: MaterialStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
-                                // All rows will have the same selected color.
-                                if (states.contains(MaterialState.selected)) {
-                                  return Colors.red;
-                                }
-                                // Even rows will have a grey color.
-
-                                return null; // Use default value for other states and odd rows.
-                              }),
                               cells: <DataCell>[
                                 DataCell(willDeleteRow == true
                                     ? SizedBox(
@@ -287,7 +296,13 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                                         width: 32,
                                         child: IconButton(
                                           padding: EdgeInsets.zero,
-                                            onPressed: () {
+                                            onPressed: widget.isEditTable == true &&
+                                                shoppingItems.length == 1 ? () {
+                                            CustomBottomSheet().showBottomSheet(context,
+                                                DropExpenseTable(houseId: widget.houseId));
+
+
+                                            } : () {
                                               setState(() {
                                                 shoppingItems.remove(item);
                                               });
