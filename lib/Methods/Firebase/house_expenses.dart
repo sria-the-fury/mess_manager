@@ -27,7 +27,7 @@ class HouseExpense{
     final year = DateTime.now().year;
     await FirebaseFirestore.instance.collection('houses').doc(houseId).collection('expenses').doc('$day$month$year').delete().then((value){
       Get.back(closeOverlays: true);
-      CustomGetSnackbar().warning('EXPENSES', 'Today\'s expenses have been removed. ');
+      CustomGetSnackbar().warning('EXPENSES', 'Today\'s expense table has been removed. ');
     });
 
   }
