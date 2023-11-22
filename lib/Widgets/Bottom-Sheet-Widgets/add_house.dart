@@ -32,7 +32,7 @@ class _AddHouseState extends State<AddHouse> {
               if(states.contains( MaterialState.selected)){
                 return Colors.teal.shade500;
               }
-              return Colors.grey.shade400;
+              return Colors.white;
             }),
             stepIconBuilder: (index, stepState){
               if(index == _index ) {

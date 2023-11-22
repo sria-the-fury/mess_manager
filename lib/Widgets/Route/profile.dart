@@ -298,7 +298,7 @@ class _ProfileState extends State<Profile> {
                                               color: userRole != null &&
                                                       userWorkPlace != null
                                                   ? Colors.white
-                                                  : Colors.grey.shade600,
+                                                  : (darkTheme ? Colors.grey.shade600 : Colors.white54),
                                               size: 18),
                                           const SizedBox(
                                             width: 5,
@@ -314,7 +314,7 @@ class _ProfileState extends State<Profile> {
                                                             userWorkPlace !=
                                                                 null
                                                         ? Colors.white
-                                                        : Colors.grey.shade600,
+                                                        : (darkTheme ? Colors.grey.shade600 : Colors.white54),
                                                     fontSize: 15)),
                                           ),
                                         ],
@@ -328,7 +328,7 @@ class _ProfileState extends State<Profile> {
                                           Icon(Icons.location_city,
                                               color: homeTown != null
                                                   ? Colors.white
-                                                  : Colors.grey.shade600,
+                                                  : (darkTheme ? Colors.grey.shade600 : Colors.white54),
                                               size: 18),
                                           const SizedBox(
                                             width: 5,
@@ -341,7 +341,7 @@ class _ProfileState extends State<Profile> {
                                                 style: TextStyle(
                                                     color: homeTown != null
                                                         ? Colors.white
-                                                        : Colors.grey.shade600,
+                                                        : (darkTheme ? Colors.grey.shade600 : Colors.white54),
                                                     fontSize: 15)),
                                           )
                                         ],

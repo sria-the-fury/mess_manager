@@ -47,20 +47,20 @@ class _HomeState extends State<BottomNavHome> {
       const Profile(),
     ];
 
-    final bottomNavItems = [
-      const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-      const BottomNavigationBarItem(icon: Icon(Icons.flatware), label: 'Meals'),
-      const BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Expenses'),
-       BottomNavigationBarItem(icon: CircularProfile(roundBorder: currentPageIndex == 3
+    final navigationDest = [
+      const NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+      const NavigationDestination(icon: Icon(Icons.flatware), label: 'Meals'),
+      const NavigationDestination(icon: Icon(Icons.money), label: 'Expenses'),
+      NavigationDestination(icon: CircularProfile(roundBorder: currentPageIndex == 3
            ? true : false, imageHeight: 30) , label: 'Profile'),
     ];
 
-    final bottomNavBar = BottomNavigationBar(
-      items: bottomNavItems,
-      type: BottomNavigationBarType.fixed,
-      currentIndex: currentPageIndex,
-      enableFeedback: true,
-      onTap: (int index){
+    final bottomNavBar = NavigationBar(
+      destinations: navigationDest,
+      selectedIndex: currentPageIndex,
+      height: 60,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+      onDestinationSelected: (int index){
       setState(() {
         currentPageIndex = index;
       });

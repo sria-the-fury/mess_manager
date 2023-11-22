@@ -36,10 +36,8 @@ final lightThemeData = ThemeData(
       backgroundColor: Colors.teal[600],
       titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20)),
   colorScheme: const ColorScheme.light(background: Colors.white),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: Colors.teal[600],
-    selectedItemColor: Colors.white,
-    unselectedItemColor: Colors.white54,
+  navigationBarTheme: NavigationBarThemeData(
+    backgroundColor: Colors.teal.shade100,
   ),
   useMaterial3: true,
 );
@@ -89,10 +87,8 @@ final darkThemeData = ThemeData(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,
         titleTextStyle: TextStyle(color: Colors.white, fontSize: 20)),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    navigationBarTheme: const NavigationBarThemeData(
       backgroundColor: Colors.black,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white38,
     ),
     colorScheme: const ColorScheme.dark(),
     useMaterial3: true);

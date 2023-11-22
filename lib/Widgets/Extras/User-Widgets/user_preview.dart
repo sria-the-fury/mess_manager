@@ -68,11 +68,11 @@ class UserPreview extends StatelessWidget {
               ],
             ),
           );
-        } else {
+        }
+        else {
           final selectedUser = userController.membersData
-              .firstWhere((user) => user['userID'] == memberId);
-          return selectedUser.containsKey('houseId')
-              ? GestureDetector(
+              .firstWhere((user) => (user['userID'] == memberId && user['houseId'] != null));
+          return  GestureDetector(
                   onTap: () => Get.defaultDialog(
                     title: '',
                     titlePadding: EdgeInsets.zero,
@@ -145,8 +145,7 @@ class UserPreview extends StatelessWidget {
                       ],
                     ),
                   ),
-                )
-              : const SizedBox();
+                );
         }
       },
     );

@@ -2,12 +2,11 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mess_manager/Methods/Controller/firestore_controller.dart';
-
 import 'package:mess_manager/Widgets/Bottom-Sheet-Widgets/add_house.dart';
 import 'package:mess_manager/Widgets/Custom-Bottom-Sheet/bottom_sheet.dart';
 import 'package:mess_manager/Widgets/Extras/custom_get_snackbar.dart';
 import 'package:mess_manager/Widgets/Extras/home_details.dart';
-import 'package:mess_manager/Widgets/Extras/today_meals.dart';
+import 'package:mess_manager/Widgets/Extras/users_today_meals.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -17,7 +16,9 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final darkTheme = Theme.of(context).brightness.name == 'dark' ? true : false;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('HOME'),
@@ -32,6 +33,7 @@ class Home extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 HomeDetails(),
+                UsersTodayMeals()
               ],
             );
           } else if(!userController.userData.containsKey('houseId')){

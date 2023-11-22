@@ -44,6 +44,21 @@ class FirestoreService {
     });
 
   }
+
+  Stream<Stream<Map<String, dynamic>>> getHouseTodayMeals() {
+    return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
+      final userData = documentSnapshot.data()!;
+      final day = DateTime.now().day;
+      final month = DateTime.now().month;
+      final year = DateTime.now().year;
+      return _firestore.collection('houses').doc(userData['houseId']).collection('meals').doc('$day$month$year')
+          .snapshots().map((documentSnapshot){
+        return documentSnapshot.exists ? documentSnapshot.data()! : {};
+      });
+    });
+
+  }
+
   Stream<Stream<Map<String, dynamic>>> getHouseYesterdayExpense() {
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       final userData = documentSnapshot.data()!;

@@ -8,6 +8,7 @@ class FirestoreController extends GetxController {
 
   final RxList<Map<String, dynamic>> membersData = <Map<String, dynamic>>[].obs;
   final RxMap<String, dynamic> houseTodayExpense = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> houseTodayMeals = <String, dynamic>{}.obs;
   final RxMap<String, dynamic> houseYesterdayExpense = <String, dynamic>{}.obs;
   final RxMap<String, dynamic> userData = <String, dynamic>{}.obs;
   final RxMap<String, dynamic> houseData = <String, dynamic>{}.obs;
@@ -21,6 +22,13 @@ class FirestoreController extends GetxController {
         houseTodayExpense.assignAll(streamData);
       });
     });
+
+    _firestoreService.getHouseTodayMeals().listen((expenseEvent) {
+      expenseEvent.listen((streamData) {
+        houseTodayMeals.assignAll(streamData);
+      });
+    });
+
     _firestoreService.getHouseYesterdayExpense().listen((expenseEvent) {
       expenseEvent.listen((streamData) {
         houseYesterdayExpense.assignAll(streamData);
