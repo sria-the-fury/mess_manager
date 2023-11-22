@@ -59,6 +59,21 @@ class FirestoreService {
 
   }
 
+  Stream<Stream<Map<String, dynamic>>> getHouseTomorrowMeals() {
+    return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
+      final userData = documentSnapshot.data()!;
+      final tomorrow = DateTime.now().add(const Duration(days: 1));
+      final month = tomorrow.month;
+      final year = tomorrow.year;
+      return _firestore.collection('houses').doc(userData['houseId']).collection('meals')
+          .doc('${tomorrow.day}$month$year')
+          .snapshots().map((documentSnapshot){
+        return documentSnapshot.exists ? documentSnapshot.data()! : {};
+      });
+    });
+
+  }
+
   Stream<Stream<Map<String, dynamic>>> getHouseYesterdayExpense() {
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       final userData = documentSnapshot.data()!;

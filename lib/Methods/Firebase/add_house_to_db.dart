@@ -15,7 +15,7 @@ class AddHouseToDB{
       'houseLocation' : location,
       'createdBy' : currentUser.uid,
       'houseManager' : currentUser.uid,
-      'createdAt' : DateTime.now(),
+      'createdAt' :FieldValue.serverTimestamp(),
       'members' : [currentUser.uid]
 
     }, SetOptions(merge: true)).then((value){

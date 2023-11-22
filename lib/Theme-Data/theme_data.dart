@@ -37,6 +37,7 @@ final lightThemeData = ThemeData(
       titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20)),
   colorScheme: const ColorScheme.light(background: Colors.white),
   navigationBarTheme: NavigationBarThemeData(
+    indicatorColor: Colors.teal.shade600,
     backgroundColor: Colors.teal.shade100,
   ),
   useMaterial3: true,
@@ -87,7 +88,8 @@ final darkThemeData = ThemeData(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,
         titleTextStyle: TextStyle(color: Colors.white, fontSize: 20)),
-    navigationBarTheme: const NavigationBarThemeData(
+    navigationBarTheme:  NavigationBarThemeData(
+      indicatorColor: Colors.teal.shade600,
       backgroundColor: Colors.black,
     ),
     colorScheme: const ColorScheme.dark(),

@@ -346,10 +346,15 @@ class _AddShoppingItemsState extends State<AddShoppingItems> {
                           ElevatedButton(
                               onPressed: widget.isEditTable != true
                                   ? () {
-                                      HouseExpense().addDailyExpense(
-                                          widget.houseId,
-                                          shoppingItems,
-                                          widget.currentUserId);
+                                try{
+                                  HouseExpense().addDailyExpense(
+                                      widget.houseId,
+                                      shoppingItems,
+                                      widget.currentUserId);
+                                } catch(e){
+                                  debugPrint('Error at add item $e');
+                                }
+
                                     }
                                   : widget.isEditTable == true &&
                                           !listEquals(shoppingItems,

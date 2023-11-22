@@ -7,16 +7,14 @@ import 'package:mess_manager/Widgets/Extras/User-Widgets/user_preview_details.da
 import 'package:shimmer/shimmer.dart';
 
 class UserPreview extends StatelessWidget {
-  final String houseName;
+  final String? houseName;
   final String houseManager;
-  final String houseCreator;
   final String houseId;
   final String memberId;
   UserPreview(
       {super.key,
-      required this.houseName,
+       this.houseName,
       required this.houseManager,
-      required this.houseCreator,
       required this.houseId,
       required this.memberId});
   final FirestoreController userController = Get.put(FirestoreController());
@@ -73,7 +71,7 @@ class UserPreview extends StatelessWidget {
           final selectedUser = userController.membersData
               .firstWhere((user) => (user['userID'] == memberId && user['houseId'] != null));
           return  GestureDetector(
-                  onTap: () => Get.defaultDialog(
+                  onTap: houseName != null ? () => Get.defaultDialog(
                     title: '',
                     titlePadding: EdgeInsets.zero,
                     contentPadding: const EdgeInsets.only(top: 0),
@@ -83,8 +81,8 @@ class UserPreview extends StatelessWidget {
                         houseManager: houseManager,
                         houseId: houseId,
                         selectedMembersData: selectedUser,
-                        houseName: houseName),
-                  ),
+                        houseName: houseName!),
+                  ) : null,
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.teal[600],

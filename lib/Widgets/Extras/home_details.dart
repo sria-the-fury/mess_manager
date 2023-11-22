@@ -422,8 +422,6 @@ class HomeDetails extends StatelessWidget {
                                   memberId: memberId,
                                   houseId:
                                       houseController.houseData['houseId'],
-                                  houseCreator: houseController
-                                      .houseData['createdBy'],
                                   houseManager: houseController
                                       .houseData['houseManager']);
                             }).toList(),

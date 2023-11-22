@@ -8,9 +8,10 @@ class HouseExpense{
     final day = DateTime.now().day;
     final month = DateTime.now().month;
     final year = DateTime.now().year;
-    await FirebaseFirestore.instance.collection('houses').doc(houseId).collection('expenses').doc('$day$month$year').set({
+    await FirebaseFirestore.instance.collection('houses').doc(houseId).collection('expenses').doc('$day$month$year')
+        .set({
       'id': '$day$month$year',
-      'createdAt': DateTime.now(),
+      'createdAt': FieldValue.serverTimestamp(),
       'shoppingItems': shoppingItems,
       'addedBy': currentUserId
 

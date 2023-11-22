@@ -15,7 +15,7 @@ class Meals extends StatelessWidget {
         ],
         title: const Text('MEALS'),
       ),
-      body: const SingleChildScrollView(
+      body:  SingleChildScrollView(
         child: TodayMeals(),
       ),
     );
