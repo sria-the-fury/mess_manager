@@ -56,7 +56,7 @@ class _AddHouseState extends State<AddHouse> {
                         AddHouseToDB().addHouse(houseName, houseAddress);
                         Get.back(closeOverlays: true);
                       } :
-                      ((houseName.isNotEmpty && houseName.trim() != widget.houseName!)
+                      ((houseName.isNotEmpty && houseName.trim() != widget.houseName)
                           || (houseAddress.isNotEmpty && houseAddress.trim() != widget.houseAddress!))
                           && widget.isEdit == true &&
                           controlDetails.stepIndex == 2 ? (){

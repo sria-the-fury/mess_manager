@@ -61,7 +61,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
               authUser.sendEmailVerification();
             }
           } : null,
-              child: const Text('Send verification link')
+              child: Text(secsRemaining == 0 ? 'Send verification link' : 'Please wait $secsRemaining secs')
           ),
           ElevatedButton(onPressed: () async {
             await FirebaseAuth.instance.signOut();

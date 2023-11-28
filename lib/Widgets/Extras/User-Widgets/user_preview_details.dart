@@ -158,7 +158,7 @@ class UserPreviewDetails extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       CustomBottomSheet().showBottomSheet(context,
-                          RemoveHouseMates(houseMateName: selectedMembersData['displayName'],
+                          RemoveHouseMates(houseMateName: selectedMembersData['displayName'], removeBySelf: false,
                             houseMateId: selectedMembersData['userID'], houseId: houseId,
 
                           ));
@@ -218,7 +218,13 @@ class UserPreviewDetails extends StatelessWidget {
                 selectedMembersData['userID'] &&
                currentUserId != houseManager)
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  CustomBottomSheet().showBottomSheet(context,
+                      RemoveHouseMates(houseMateName: selectedMembersData['displayName'],
+                        houseMateId: selectedMembersData['userID'], houseId: houseId, removeBySelf: true,
+
+                      ));
+                },
                 child: Container(
                     padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(

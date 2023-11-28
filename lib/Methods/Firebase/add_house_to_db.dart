@@ -52,7 +52,7 @@ class AddHouseToDB{
 
   }
 
-  removeMatesFromHouse(houseMateId, houseId) async {
+  removeMatesFromHouse(houseMateId, houseId, removeBySelf) async {
     await FirebaseFirestore.instance.collection('houses').doc(houseId).set({
       'members' : FieldValue.arrayRemove([houseMateId])
 
@@ -63,7 +63,8 @@ class AddHouseToDB{
         }, SetOptions(merge: true))
             .then((value){
           Get.back(closeOverlays: true);
-          CustomGetSnackbar().warning('HOUSE MATE', 'Your house mate has been removed.');
+          CustomGetSnackbar().warning(removeBySelf == true ?  "LEAVE HOUSE" : "HOUSE MATE",
+              removeBySelf == true ? "You have left this house." : 'Your house mate has been removed.');
         }));
   }
 
@@ -73,7 +74,7 @@ class AddHouseToDB{
 
     }, SetOptions(merge: true)).then((value){
       Get.back(closeOverlays: true);
-      CustomGetSnackbar().success('HOUSE MANAGER', 'House Manager is changed.');
+      CustomGetSnackbar().success('HOUSE MANAGER', 'House Manager is aasigned.');
     });
 
   }

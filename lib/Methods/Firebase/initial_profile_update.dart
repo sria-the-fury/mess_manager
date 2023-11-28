@@ -14,11 +14,12 @@ class InitialProfileUpdate {
   }
 
   updateDisplayName(name, uid) async {
-    final currentUser = FirebaseAuth.instance.currentUser!;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .set({"displayName": name}, SetOptions(merge: true)).then((value) => currentUser.updateDisplayName(name));
+    await FirebaseAuth.instance.currentUser!.updateDisplayName(name).then((value) =>
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .set({"displayName": name}, SetOptions(merge: true)));
+
 
   }
 

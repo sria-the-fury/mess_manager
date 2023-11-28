@@ -95,7 +95,6 @@ class _CircularProfileState extends State<CircularProfile> {
       }
     });
 
-    // final downloadUrl = await storageRef.getDownloadURL();
   }
 
 
@@ -117,7 +116,7 @@ class _CircularProfileState extends State<CircularProfile> {
                 return CachedNetworkImage(
                   width: widget.imageHeight,
                   height: widget.imageHeight,
-                  imageUrl: userData['photoURL'],
+                  imageUrl: userData['photoURL'] ?? 'M',
                   imageBuilder: (context, imageProvider) => Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,

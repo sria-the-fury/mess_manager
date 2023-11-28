@@ -112,14 +112,12 @@ class _UpdateBirthdayState extends State<UpdateBirthday> {
                       children: [
                         Icon(
                           Icons.cancel,
-                          color: Colors.white,
                         ),
                         SizedBox(
                           width: 5,
                         ),
                         Text(
                           'CLOSE',
-                          style: TextStyle(color: Colors.white),
                         )
                       ],
                     )),

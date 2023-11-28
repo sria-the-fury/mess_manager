@@ -1224,17 +1224,17 @@ class TodayMeals extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        const Column(
+                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Icon(Icons.restaurant),
+                            const Icon(Icons.restaurant),
                             Badge(
                               smallSize: 20,
                               textColor: Colors.black,
                               backgroundColor: Colors.white,
-                              textStyle: TextStyle(fontSize: 9),
-                              label: Text('100'),
+                              textStyle: const TextStyle(fontSize: 9),
+                              label: Text('${todayMeals['breakfastTakenBy'].isNotEmpty ? todayMeals['breakfastTakenBy'].length : '0'}'),
                             )
                           ],
                         ),
@@ -1266,17 +1266,17 @@ class TodayMeals extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        const Column(
+                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Icon(Icons.no_meals),
+                            const Icon(Icons.no_meals),
                             Badge(
                               smallSize: 20,
                               textColor: Colors.black,
                               backgroundColor: Colors.white,
-                              textStyle: TextStyle(fontSize: 9),
-                              label: Text('100'),
+                              textStyle: const TextStyle(fontSize: 9),
+                              label: Text('${todayMeals['breakfastNotTakenBy'].isNotEmpty ? todayMeals['breakfastNotTakenBy'].length : '0'}'),
                             )
                           ],
                         ),

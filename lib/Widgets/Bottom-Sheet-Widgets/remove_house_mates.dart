@@ -7,8 +7,9 @@ class RemoveHouseMates extends StatelessWidget {
   final String houseMateName;
   final String houseMateId;
   final String houseId;
+  final bool removeBySelf;
 
-  const RemoveHouseMates({super.key, required this.houseMateName, required this.houseMateId, required this.houseId,});
+  const RemoveHouseMates({super.key, required this.houseMateName, required this.houseMateId, required this.houseId, required this.removeBySelf,});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class RemoveHouseMates extends StatelessWidget {
                           fontSize: 14,
                         )),
                     TextSpan(
-                        text: ' $houseMateName',
+                        text: ' ${removeBySelf == true ? "yourself" : houseMateName}',
                         style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold)),
@@ -39,7 +40,7 @@ class RemoveHouseMates extends StatelessWidget {
             TextButton(
               onPressed: () {
                 AddHouseToDB().removeMatesFromHouse(
-                   houseMateId, houseId);
+                   houseMateId, houseId, removeBySelf);
                 Get.back(closeOverlays: true);
               },
               child: Container(
