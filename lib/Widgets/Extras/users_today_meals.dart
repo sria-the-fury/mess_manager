@@ -9,21 +9,30 @@ class UsersTodayMeals extends StatelessWidget {
    UsersTodayMeals({super.key});
   final FirestoreController userController = Get.put(FirestoreController());
 
+
   @override
   Widget build(BuildContext context) {
     final darkTheme = Theme.of(context).brightness.name == 'dark' ? true : false;
     User? currentUser = FirebaseAuth.instance.currentUser!;
+
+
     return Obx((){
       if(userController.houseTomorrowMeals.isEmpty){
         if(userController.houseTodayMeals.isEmpty){
+          debugPrint('this is empty');
           return const SizedBox();
         }
         else{
           final todayMeals = userController.houseTodayMeals;
 
+          final bool updateBreakfast = DateTime.now().hour < 5 && DateTime.now().minute < 30 ? true : false;
+
+
           return Container(
             padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.only(left: 10, right: 10),
             decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
                 color: darkTheme ? Colors.black87 : Colors.teal.shade100
             ),
             child:  Column(
@@ -42,7 +51,7 @@ class UsersTodayMeals extends StatelessWidget {
                             Text('Breakfast')
                           ],
                         ),
-                        IconButton(onPressed: todayMeals['breakfastTakenBy'].contains(currentUser.uid) ?
+                        IconButton(onPressed: updateBreakfast == true ? (todayMeals['breakfastTakenBy'].contains(currentUser.uid) ?
                             (){
                           HouseMeals().uncheckMeals(currentUser.uid, "BREAKFAST", todayMeals['id'],
                               userController.houseData['houseId']);
@@ -50,7 +59,7 @@ class UsersTodayMeals extends StatelessWidget {
                             : () {
                           HouseMeals().checkMeals(currentUser.uid, "BREAKFAST", todayMeals['id'],
                               userController.houseData['houseId']);
-                        },
+                        }) : null,
                             icon:  Icon(todayMeals['breakfastTakenBy'].contains(currentUser.uid)
                                 ? Icons.check_box : Icons.check_box_outline_blank)),
                       ],
@@ -86,7 +95,7 @@ class UsersTodayMeals extends StatelessWidget {
                             Text('Dinner')
                           ],
                         ),
-                        IconButton(onPressed: todayMeals['dinnerTakenBy'].contains(currentUser.uid) ?
+                        IconButton(onPressed: DateTime.now().hour < 5 ? (todayMeals['dinnerTakenBy'].contains(currentUser.uid) ?
                             (){
                           HouseMeals().uncheckMeals(currentUser.uid, "DINNER", todayMeals['id'],
                               userController.houseData['houseId']);
@@ -94,9 +103,9 @@ class UsersTodayMeals extends StatelessWidget {
                             : () {
                           HouseMeals().checkMeals(currentUser.uid, "DINNER", todayMeals['id'],
                               userController.houseData['houseId']);
-                        },
+                        }) : null,
                             icon:  Icon(todayMeals['dinnerTakenBy'].contains(currentUser.uid)
-                                ? Icons.check_box : Icons.check_box_outline_blank)),
+                                ? Icons.check_box : Icons.check_box_outline_blank)) ,
 
 
                       ],
@@ -110,11 +119,13 @@ class UsersTodayMeals extends StatelessWidget {
         }
       }
       else{
-        final tomorrowMeals = userController.houseTodayMeals;
+        final tomorrowMeals = userController.houseTomorrowMeals;
 
         return Container(
           padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.only(left: 10, right: 10),
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
               color: darkTheme ? Colors.black87 : Colors.teal.shade100
           ),
           child:  Column(
