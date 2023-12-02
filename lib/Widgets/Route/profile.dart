@@ -119,7 +119,8 @@ class _ProfileState extends State<Profile> {
                                             color: darkTheme
                                                 ? Colors.black87
                                                 : Colors.teal.shade100,
-                                            shape: BoxShape.circle),
+                                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(15),bottomLeft: Radius.circular(15))
+                                            ),
                                         child: Icon(
                                           Icons.cake,
                                           size: 22,
@@ -129,7 +130,7 @@ class _ProfileState extends State<Profile> {
                                         ),
                                       ),
                                       const SizedBox(
-                                        width: 5,
+                                        width: 2,
                                       ),
                                       Container(
                                         padding: const EdgeInsets.all(10),
@@ -137,8 +138,8 @@ class _ProfileState extends State<Profile> {
                                             color: darkTheme
                                                 ? Colors.black87
                                                 : Colors.teal.shade100,
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
+                                            borderRadius: const BorderRadius.only(topRight: Radius.circular(15),bottomRight: Radius.circular(15))
+                              ),
                                         child: Text(  userBirthday != null 
                                             ?  getBirthdayDate(userBirthday):
                                           'Birthday',
