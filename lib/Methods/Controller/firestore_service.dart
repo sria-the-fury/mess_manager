@@ -48,9 +48,11 @@ class FirestoreService {
   Stream<Stream<Map<String, dynamic>>> getHouseTodayMeals() {
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       final userData = documentSnapshot.data()!;
-      final day = DateTime.now().day;
+      final dayWithoutZero = DateTime.now().day;
+      final day = dayWithoutZero.toString().length > 1 ? dayWithoutZero : '0$dayWithoutZero';
       final month = DateTime.now().month;
       final year = DateTime.now().year;
+      print('$day$month$year');
       return _firestore.collection('houses').doc(userData['houseId']).collection('meals').doc('$day$month$year')
           .snapshots().map((documentSnapshot){
         return documentSnapshot.exists ? documentSnapshot.data()! : {};
@@ -63,10 +65,12 @@ class FirestoreService {
     return _firestore.collection('users').doc(currentUser.uid).snapshots().map((documentSnapshot){
       final userData = documentSnapshot.data()!;
       final tomorrow = DateTime.now().add(const Duration(days: 1));
+      final dayWithoutZero = tomorrow.day;
+      final day = dayWithoutZero.toString().length > 1 ? dayWithoutZero : '0$dayWithoutZero';
       final month = tomorrow.month;
       final year = tomorrow.year;
       return _firestore.collection('houses').doc(userData['houseId']).collection('meals')
-          .doc('${tomorrow.day}$month$year')
+          .doc('$day$month$year')
           .snapshots().map((documentSnapshot){
         return documentSnapshot.exists ? documentSnapshot.data()! : {};
       });
