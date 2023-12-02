@@ -123,7 +123,7 @@ class _ProfileState extends State<Profile> {
                                             ),
                                         child: Icon(
                                           Icons.cake,
-                                          size: 22,
+                                          size: 20,
                                           color: userBirthday != null
                                               ? (darkTheme ? Colors.white : Colors.black)
                                               : Colors.grey.shade600,
