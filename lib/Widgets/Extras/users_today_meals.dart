@@ -19,7 +19,6 @@ class UsersTodayMeals extends StatelessWidget {
     return Obx((){
       if(userController.houseTomorrowMeals.isEmpty){
         if(userController.houseTodayMeals.isEmpty){
-          debugPrint('this is empty');
           return const SizedBox();
         }
         else{
