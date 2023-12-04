@@ -56,13 +56,15 @@ exports.createEveryDayMealsDoc = functions.pubsub.schedule("00 20 * * *")
                     .doc(`${tomorrowDate}`).set({
                       id: `${tomorrowDate}`,
                       createdAt: new Date(),
-                      breakfastTakenBy: doc.data().members,
-                      lunchTakenBy: doc.data().members,
-                      dinnerTakenBy: doc.data().members,
+                      breakfastTakenBy: doc.data().mealsFor,
+                      lunchTakenBy: doc.data().mealsFor,
+                      dinnerTakenBy: doc.data().mealsFor,
                       breakfastNotTakenBy: [],
                       lunchNotTakenBy: [],
                       dinnerNotTakenBy: [],
-                      guestsMeal: [],
+                      guestsL: [],
+                      guestsD: [],
+                      guestsB: [],
                     }, {merge: true});
               });
             }
