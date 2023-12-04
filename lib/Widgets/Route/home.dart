@@ -28,13 +28,15 @@ class Home extends StatelessWidget {
           return const SizedBox();
         } else {
           if (userController.userData.containsKey('houseId')) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                HomeDetails(),
-                UsersTodayMeals()
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HomeDetails(),
+                  UsersTodayMeals()
+                ],
+              ),
             );
           } else if(!userController.userData.containsKey('houseId')){
             return Center(
