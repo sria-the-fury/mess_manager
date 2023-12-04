@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
     themeMode() {
       final themBox = GetStorage();
       final themeMode = themBox.read('themeMode');
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/login', page:  () => const Login()),
         GetPage(name: '/', page:  () => const BottomNavHome(), binding: HomeBindings()),
       ],
-      home: const Authenticated(),
+      home: const Authenticated()
     );
   }
 }
