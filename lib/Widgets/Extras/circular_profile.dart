@@ -15,12 +15,13 @@ import 'package:shimmer/shimmer.dart';
 class CircularProfile extends StatefulWidget {
   final double imageHeight;
   final bool? roundBorder;
+  final double? roundBorderWidth;
   final bool? updatePhoto;
   const CircularProfile(
       {super.key,
       required this.imageHeight,
       this.roundBorder,
-      this.updatePhoto});
+      this.updatePhoto, this.roundBorderWidth});
 
   @override
   State<CircularProfile> createState() => _CircularProfileState();
@@ -121,7 +122,8 @@ class _CircularProfileState extends State<CircularProfile> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: widget.roundBorder == true
-                          ? Border.all(color: Colors.white, width: 2)
+                          ? Border.all(color: darkTheme ? Colors.white : Colors.black54,
+                          width: widget.roundBorderWidth != null ? 4 : 2)
                           : null,
                       image: DecorationImage(
                         image: imageProvider,
@@ -169,13 +171,14 @@ class _CircularProfileState extends State<CircularProfile> {
                 width: 28,
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: darkTheme ? Colors.black54 : Colors.white54),
+                    color: darkTheme ? Colors.white : Colors.black),
                 child: IconButton(
                     padding: const EdgeInsets.all(0.0),
                     onPressed: () => _getPickedImage(context, authUser),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.add_a_photo,
                       size: 20,
+                        color: darkTheme ? Colors.black : Colors.white
                     )),
               )),
       ],
