@@ -10,14 +10,14 @@ class UserSignInProvider extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(2),
         alignment: Alignment.center,
-        height: 30,
-        width: 30,
+        height: 25,
+        width: 25,
         decoration: const BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle),
-        child: providerId == 'google.com' ? const FaIcon(FontAwesomeIcons.google, size: 20, color: Colors.purple,) :
-        providerId == 'facebook.com' ?  FaIcon(  FontAwesomeIcons.facebook, size: 20, color: Colors.blue.shade700) :
-        Icon(Icons.email, size: 20, color: Colors.blue.shade800)
+        child: providerId == 'google.com' ? const FaIcon(FontAwesomeIcons.google, size: 15, color: Colors.purple,) :
+        providerId == 'facebook.com' ?  FaIcon(  FontAwesomeIcons.facebook, size: 15, color: Colors.blue.shade700) :
+        Icon(Icons.email, size: 15, color: Colors.blue.shade800)
     );
   }
 }
