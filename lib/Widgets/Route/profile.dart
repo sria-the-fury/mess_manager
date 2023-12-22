@@ -37,20 +37,12 @@ class _ProfileState extends State<Profile> {
         date.seconds * 1000,
       );
 
-      return DateFormat('d MMMM yyyy').format(dateInMillSeconds);
+      return DateFormat('d MMMM').format(dateInMillSeconds);
     }
 
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          const Text(
-            'SIGNED IN WITH  ',
-            style: TextStyle(fontSize: 16, color: Colors.white),
-          ),
-          UserSignInProvider(
-            providerId: authUser.providerData[0].providerId,
-          )
-        ],
+
         title: const Text('PROFILE'),
       ),
       body: SingleChildScrollView(
@@ -64,6 +56,8 @@ class _ProfileState extends State<Profile> {
                     Column(
                       children: [
                         const CircularProfile(
+                          roundBorderWidth: 3,
+                          roundBorder: true,
                           imageHeight: 120,
                           updatePhoto: true,
                         ),
@@ -86,10 +80,14 @@ class _ProfileState extends State<Profile> {
                                   : Colors.teal.shade100,
                               borderRadius: BorderRadius.circular(15)),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               UsersBasicDataWidget(
                                   userData: authUser.email.toString(),
                                   iconName: Icons.email),
+                              UserSignInProvider(
+                                providerId: authUser.providerData[0].providerId,
+                              )
                             ],
                           ),
                         ),
